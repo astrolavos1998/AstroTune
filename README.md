@@ -1,4 +1,4 @@
-# AstroTune 1.5beta
+# AstroTune 2.1
 
 **A settings advisor for DCS World — reads your real config, knows your hardware, tells you what to change.**
 **Σύμβουλος ρυθμίσεων για το DCS World — διαβάζει το πραγματικό σου αρχείο, ξέρει το μηχάνημά σου, σου λέει τι να αλλάξεις.**
@@ -7,8 +7,11 @@
 
 🇬🇧 [English](#english) · 🇬🇷 [Ελληνικά](#ελληνικά)
 
-> **Preview is the default. The graphics driver is never modified. Nothing is written to DCS unless you explicitly ask.**
-> **Η προεπισκόπηση είναι η προεπιλογή. Ο driver δεν πειράζεται ποτέ. Τίποτα δεν γράφεται στο DCS αν δεν το ζητήσεις ρητά.**
+> **Read only. AstroTune changes no setting in Windows, in your graphics driver or in DCS — it shows you what to set, and you set it yourself.**
+> **Μόνο ανάγνωση. Το AstroTune δεν αλλάζει καμία ρύθμιση σε Windows, driver ή DCS — σου δείχνει τι να βάλεις, και το βάζεις εσύ.**
+>
+> **Use of this program and of the settings it suggests is ENTIRELY AT THE USER'S OWN RISK.**
+> **Η χρήση του προγράμματος και των ρυθμίσεων που προτείνει γίνεται με ΑΠΟΚΛΕΙΣΤΙΚΗ ΕΥΘΥΝΗ ΤΟΥ ΧΡΗΣΤΗ.**
 
 ---
 
@@ -20,46 +23,50 @@ AstroTune is a single-file Python desktop app. It reads your actual `options.lua
 graphics driver profile, detects what hardware you are running, and produces a per-setting
 recommendation for the goal you choose — on a monitor or in VR.
 
-It is not a "just set these" list. Every suggestion starts from the values you have *right
-now*, weighted by your card, CPU, VRAM, resolution and whether you fly multiplayer. The same
+It is not a "just set these" list. Every suggestion starts from the values you have _right
+now_, weighted by your card, CPU, VRAM, resolution and whether you fly multiplayer. The same
 setting gets a different answer on 8GB than on 24GB.
 
 - **39 DCS settings** with a measurable cost (36 graphics, 3 cockpit)
-- **4 goals** — smooth motion, maximum FPS, maximum graphics, balanced — plus switches for
-  multiplayer and low-level flight
+- **Four choices, one path** — VR or Monitor → Multiplayer or Single Player → Low level or
+  not → one of four goals
 - **44 GPUs, 27 CPUs, 12 headsets** in the database, plus automatic detection
 - **Driver checklist** — 13 items for NVIDIA, 11 for AMD, split into Global and per-application
 - **Read-only comparison** of your three DCS Custom slots against your active settings
 - Greek and English, dark and light
 
-### Safety
+### Read only, and your responsibility
 
-| | Read | Write |
-|---|:---:|---|
-| Driver profile database (NVAPI) | ✔ | **never** |
-| Windows registry | ✔ | **never** |
-| `Config\OptionsPresets\Custom*.lua` | ✔ | **never** |
-| `options.lua` | ✔ | on request only |
-| Monitor refresh rate | ✔ | only via the button |
+|                                           | Read | Write     |
+| ----------------------------------------- | :--: | --------- |
+| Windows settings (refresh rate, registry) |  ✔   | **never** |
+| Driver profile database (NVAPI)           |  ✔   | **never** |
+| `options.lua`                             |  ✔   | **never** |
+| `Config\OptionsPresets\Custom*.lua`       |  ✔   | **never** |
 
-When it does write to `options.lua` it refuses to run while DCS is open, takes a timestamped
-backup first, shows the exact list of changes and waits for a yes, then replaces **only** the
-value text after verifying the bytes at that position are exactly what it read. Anything it
-does not recognise with confidence, it leaves alone.
+This is not a promise made by the user interface — it is a property of the code. The
+`options.lua` reader **has no write methods**: no `set`, no `save`. There is no
+display-settings call. The NVAPI calls are read-only. A change cannot happen by accident,
+because there is no path for it to happen.
 
-The driver database is shared across every game on the machine. A bad write there would not
-only break DCS, and there is no good reason to take that risk when the tool can simply tell
-you what to click — so the NVAPI calls are read-only, by design.
+The only files it creates are its own, in your user profile: `~/.astrotune.json` for theme,
+language and the build you picked, and `~/.astrotune_exports/` for a copy of the driver
+profiles it reads.
+
+> **Use of this program and of the settings it suggests is ENTIRELY AT THE USER'S OWN
+> RISK.** The suggestions are estimates based on measurement and experience, not
+> guarantees. Check every value before you apply it, and keep a copy of your `options.lua`
+> before making large changes.
 
 ### Install
 
-**Installer** — run `AstroTune_1.5beta_Setup.exe`. No administrator rights, nothing written
+**Installer** — run `AstroTune_2.1_Setup.exe`. No administrator rights, nothing written
 to the registry, installs per-user by default.
 
 **From source** — with Python 3.10 or newer:
 
 ```bash
-python AstroTune_1_5beta.py
+python AstroTune_1_7.py
 ```
 
 Only `tkinter` is required, which ships with Python on Windows. Optional:
@@ -67,45 +74,70 @@ Only `tkinter` is required, which ships with Python on Windows. Optional:
 
 ### How to use it
 
-1. **Monitor or VR?** — asked on every launch, because in VR *which* settings matter, *what*
-   they cost, and the whole frame-cap strategy all change.
-2. **Tab 1 · PC build** — press *Detect this PC*. Fix anything it could not find. VRR is not
-   detectable: tick it only if you can see G-Sync **active** in the driver.
-3. **Tab 2 · Graphics card** — the driver checklist, Global and DCS, read-only.
-4. **Tab 3 · DCS settings** — pick a goal, read the table, then either keep the preview or
-   apply.
+Four choices, one path. Every combination produces a different set of settings — these are
+not filters over one list, the numbers themselves change.
 
-Rows in orange will change. Rows in red are low confidence and arrive **unticked** — you
-decide. A value the program cannot recognise is shown as "unknown" and no change is
-suggested for it.
+1. **VR or Monitor** — asked on every launch, because in VR _which_ settings matter, _what_
+   they cost, and the whole frame-cap strategy all change.
+2. **Multiplayer or Single Player** — on a full server, whatever costs CPU and VRAM comes
+   down.
+3. **Low level (helicopters) or not** — what you can see near the ground goes up; what only
+   matters at altitude comes down.
+4. **The goal** — Smooth motion with clarity · Maximum FPS · Maximum graphics · Balanced.
+
+Along the way: **Tab 1** detects your hardware (VRR is not detectable — tick it only if you
+can see G-Sync **active** in the driver). **Tab 2** is the driver checklist, Global and
+per-application. **Tab 3** is the DCS list. There is no apply button anywhere; _List to
+copy_ puts the rows on the clipboard.
+
+Tab 2 reads your driver by itself, by two routes: first it asks NVAPI for each value
+directly (no file, no encoding to get wrong), and if that does not work it exports the
+whole profile database to a text file and parses that. If both fail you get a window with
+exactly what the driver answered, a _Copy_ button, and whatever had already been read is
+kept — a failed re-read no longer empties the list.
+
+**Copy everything** in the bottom bar puts hardware, the driver checklist and all 39 DCS
+settings into one text, with `=` for what already matches and `->` for what needs
+changing. Every copy — this one, the driver list, the DCS list — starts with the context
+of the suggestion: date, mode, goal, multiplayer, low level, FPS cap, machine and the
+path of your `options.lua`. An empty DCS table is not a fault; it says everything is
+already on target.
+
+Tab 3 also shows your **Custom1/2/3 slots as columns**, next to Now and Target: `=` where
+a slot matches your active file, the value where it differs, `—` where the key is not in
+that slot at all. A line above the table gives each slot's save date and which keys are
+missing from which. No separate window, and nothing is ever written to those files.
+"Only what changes" starts unticked, so the tab opens on the full picture; your choice is
+remembered.
 
 ### Command line
 
 ```bash
-python AstroTune_1_5beta.py --report [smooth|fps|quality|balanced] [--sp] [--low] [--vr] [--en]
+python AstroTune_1_7.py --report [smooth|fps|quality|balanced] [--sp] [--low] [--vr] [--en]
 ```
 
-| Switch | Meaning |
-|---|---|
-| `--sp` | Single player (multiplayer is assumed otherwise) |
-| `--low` | Low level / helicopters |
-| `--vr` | Compute for VR instead of a monitor |
-| `--en` | English output |
+| Switch  | Meaning                                          |
+| ------- | ------------------------------------------------ |
+| `--sp`  | Single player (multiplayer is assumed otherwise) |
+| `--low` | Low level / helicopters                          |
+| `--vr`  | Compute for VR instead of a monitor              |
+| `--en`  | English output                                   |
 
 An `AstroTune.exe` built with `--noconsole` has nowhere to print this. Use the `.py`, or
 build a second exe with `--console`.
 
 ### Files it writes
 
-| Path | What |
-|---|---|
-| `%USERPROFILE%\.astrotune.json` | Theme, language, goal, saved build. Delete it to start fresh. |
-| `%USERPROFILE%\.astrotune_exports\` | Driver profile exports, plain text. Safe to delete. |
-| `…\Saved Games\DCS*\Config\AstroTune_backups\` | Copies of `options.lua` before every write. **Keep these.** |
+| Path                                | What                                                                            |
+| ----------------------------------- | ------------------------------------------------------------------------------- |
+| `%USERPROFILE%\.astrotune.json`     | Theme, language, goal, saved build. Delete it to start fresh.                   |
+| `%USERPROFILE%\.astrotune_exports\` | A copy of the driver profiles, so it can read them. Plain text. Safe to delete. |
+
+Both are its own, in your user profile. Nothing inside DCS, nothing in the registry.
 
 ### Building the release
 
-Put `build.bat` next to `AstroTune_1_5beta.py` and double-click it. It finds Python,
+Put `build.bat` next to `AstroTune_1_7.py` and double-click it. It finds Python,
 installs PyInstaller if missing, creates the folders the Inno script expects, builds the
 exe and tells you what is still missing. Or do it by hand:
 
@@ -113,7 +145,7 @@ exe and tells you what is still missing. Or do it by hand:
 pip install pyinstaller
 pyinstaller --onefile --noconsole --name AstroTune ^
             --distpath build --workpath build\tmp --specpath build ^
-            AstroTune_1_5beta.py
+            AstroTune_1_7.py
 ```
 
 Then compile `AstroTune_Setup.iss` with Inno Setup 6.3+. The script expects:
@@ -131,7 +163,7 @@ builds commonly trip antivirus heuristics because they unpack to a temp folder o
 `--onedir` does not.
 
 The installer wizard is English-only unless `Greek.isl` is present, because Greek is an
-*unofficial* Inno Setup translation and is not bundled. Drop it into a `languages\` folder
+_unofficial_ Inno Setup translation and is not bundled. Drop it into a `languages\` folder
 next to the `.iss` (or into Inno's own `Languages\`) and the script picks it up
 automatically. This affects the wizard only — the application itself is bilingual either way.
 
@@ -161,48 +193,51 @@ Eagle Dynamics or NVIDIA.
 `options.lua` και το προφίλ του driver, αναγνωρίζει τι υλικό έχεις, και βγάζει πρόταση ανά
 ρύθμιση για τον στόχο που διαλέγεις — σε οθόνη ή σε VR.
 
-Δεν είναι λίστα «βάλε αυτά». Κάθε πρόταση ξεκινάει από τις τιμές που έχεις *τώρα*,
+Δεν είναι λίστα «βάλε αυτά». Κάθε πρόταση ξεκινάει από τις τιμές που έχεις _τώρα_,
 σταθμισμένες με την κάρτα, τον επεξεργαστή, τη VRAM, την ανάλυση και το αν παίζεις
 multiplayer. Η ίδια ρύθμιση παίρνει άλλη απάντηση σε 8GB και άλλη σε 24GB.
 
 - **39 ρυθμίσεις** του DCS με μετρήσιμο κόστος (36 graphics, 3 κόκπιτ)
-- **4 στόχοι** — ομαλή κίνηση, μέγιστα FPS, μέγιστα γραφικά, ισορροπία — συν διακόπτες για
-  multiplayer και χαμηλή πτήση
+- **Τέσσερις επιλογές, μία διαδρομή** — VR ή Οθόνη → Multiplayer ή Single Player →
+  Χαμηλή πτήση ή όχι → ένας από τους τέσσερις στόχους
 - **44 κάρτες, 27 επεξεργαστές, 12 headsets** στη βάση, συν αυτόματη ανίχνευση
 - **Λίστα ελέγχου για τον driver** — 13 σημεία για NVIDIA, 11 για AMD, χωρισμένα σε Global
   και ανά παιχνίδι
 - **Σύγκριση μόνο για ανάγνωση** των τριών θέσεων Custom του DCS με τις ενεργές ρυθμίσεις
 - Ελληνικά και αγγλικά, σκούρο και ανοιχτό θέμα
 
-### Ασφάλεια
+### Μόνο ανάγνωση, και δική σου ευθύνη
 
-| | Ανάγνωση | Εγγραφή |
-|---|:---:|---|
-| Βάση προφίλ του driver (NVAPI) | ✔ | **ποτέ** |
-| Μητρώο των Windows | ✔ | **ποτέ** |
-| `Config\OptionsPresets\Custom*.lua` | ✔ | **ποτέ** |
-| `options.lua` | ✔ | μόνο κατόπιν αιτήματος |
-| Refresh rate οθόνης | ✔ | μόνο με το κουμπί |
+|                                              | Ανάγνωση | Εγγραφή  |
+| -------------------------------------------- | :------: | -------- |
+| Ρυθμίσεις των Windows (refresh rate, μητρώο) |    ✔     | **ποτέ** |
+| Βάση προφίλ του driver (NVAPI)               |    ✔     | **ποτέ** |
+| `options.lua`                                |    ✔     | **ποτέ** |
+| `Config\OptionsPresets\Custom*.lua`          |    ✔     | **ποτέ** |
 
-Όταν γράφει στο `options.lua`, αρνείται να το κάνει όσο τρέχει το DCS, κρατάει πρώτα
-αντίγραφο με χρονοσήμανση, δείχνει ακριβώς τι θα αλλάξει και περιμένει «ναι», και μετά
-αντικαθιστά **μόνο** το κείμενο της τιμής, αφού επαληθεύσει ότι τα bytes σε εκείνη τη θέση
-είναι ακριβώς αυτά που διάβασε. Ό,τι δεν αναγνωρίζει με βεβαιότητα, δεν το αγγίζει.
+Δεν είναι υπόσχεση του περιβάλλοντος χρήστη — είναι ιδιότητα του κώδικα. Ο αναγνώστης του
+`options.lua` **δεν έχει μεθόδους εγγραφής**: ούτε `set`, ούτε `save`. Δεν υπάρχει κλήση
+αλλαγής ρυθμίσεων οθόνης. Οι κλήσεις NVAPI είναι αποκλειστικά ανάγνωσης. Μια αλλαγή δεν
+μπορεί να συμβεί κατά λάθος, γιατί δεν υπάρχει διαδρομή για να συμβεί.
 
-Η βάση του driver είναι κοινή για όλα τα παιχνίδια του μηχανήματος. Μια λάθος εγγραφή εκεί
-δεν θα χαλούσε μόνο το DCS, και δεν υπάρχει καλός λόγος να το ρισκάρει ένα εργαλείο που
-μπορεί απλώς να σου πει τι να πατήσεις — γι' αυτό οι κλήσεις NVAPI είναι αποκλειστικά
-ανάγνωσης.
+Τα μόνα αρχεία που δημιουργεί είναι δικά του, στο προφίλ σου: το `~/.astrotune.json` για
+θέμα, γλώσσα και σύνθεση, και το `~/.astrotune_exports/` για το αντίγραφο των προφίλ του
+driver που διαβάζει.
+
+> **Η χρήση του προγράμματος και των ρυθμίσεων που προτείνει γίνεται με ΑΠΟΚΛΕΙΣΤΙΚΗ
+> ΕΥΘΥΝΗ ΤΟΥ ΧΡΗΣΤΗ.** Οι προτάσεις είναι εκτιμήσεις βασισμένες σε μετρήσεις και εμπειρία,
+> όχι εγγυήσεις. Έλεγξε κάθε τιμή πριν την εφαρμόσεις, και κράτα αντίγραφο του
+> `options.lua` σου πριν από μεγάλες αλλαγές.
 
 ### Εγκατάσταση
 
-**Με installer** — τρέξε το `AstroTune_1.5beta_Setup.exe`. Δεν ζητάει δικαιώματα
+**Με installer** — τρέξε το `AstroTune_2.1_Setup.exe`. Δεν ζητάει δικαιώματα
 διαχειριστή, δεν γράφει στο μητρώο, εγκαθίσταται μόνο για τον λογαριασμό σου.
 
 **Από τον κώδικα** — με Python 3.10 ή νεότερη:
 
 ```bash
-python AstroTune_1_5beta.py
+python AstroTune_1_7.py
 ```
 
 Χρειάζεται μόνο το `tkinter`, που έρχεται μαζί με την Python στα Windows. Προαιρετικά, το
@@ -210,45 +245,70 @@ python AstroTune_1_5beta.py
 
 ### Πώς χρησιμοποιείται
 
-1. **Οθόνη ή VR;** — ρωτάει σε κάθε άνοιγμα, γιατί σε VR αλλάζουν *ποιες* ρυθμίσεις μετράνε,
-   *πόσο* κοστίζουν, και ολόκληρη η στρατηγική του frame cap.
-2. **Καρτέλα 1 · Σύνθεση PC** — πάτα *Ανίχνευση αυτού του PC* και διόρθωσε ό,τι δεν βρήκε.
-   Το VRR δεν ανιχνεύεται: τσέκαρέ το μόνο αν βλέπεις το G-Sync **ενεργό** στον driver.
-3. **Καρτέλα 2 · Κάρτα γραφικών** — η λίστα ελέγχου, Global και DCS, μόνο για ανάγνωση.
-4. **Καρτέλα 3 · Ρυθμίσεις DCS** — διάλεξε στόχο, διάβασε τον πίνακα, και μετά κράτα την
-   προεπισκόπηση ή εφάρμοσε.
+Τέσσερις επιλογές, μία διαδρομή. Κάθε συνδυασμός δίνει διαφορετικό σύνολο ρυθμίσεων — δεν
+είναι φίλτρα πάνω σε μια ενιαία λίστα, αλλάζουν τα ίδια τα νούμερα.
 
-Οι πορτοκαλί γραμμές αλλάζουν. Οι κόκκινες είναι χαμηλής βεβαιότητας και έρχονται
-**ξεμαρκαρισμένες** — αποφασίζεις εσύ. Τιμή που το πρόγραμμα δεν αναγνωρίζει εμφανίζεται ως
-«άγνωστη» και δεν προτείνεται αλλαγή.
+1. **VR ή Οθόνη** — ρωτιέται σε κάθε άνοιγμα, γιατί σε VR αλλάζουν _ποιες_ ρυθμίσεις
+   μετράνε, _πόσο_ κοστίζουν, και ολόκληρη η στρατηγική του frame cap.
+2. **Multiplayer ή Single Player** — σε γεμάτο server πέφτει ό,τι κοστίζει σε CPU και VRAM.
+3. **Χαμηλή πτήση (ελικόπτερα) ή όχι** — ανεβαίνει ό,τι φαίνεται κοντά στο έδαφος, πέφτει
+   ό,τι μετράει μόνο ψηλά.
+4. **Ο στόχος** — Ομαλή κίνηση με ευκρίνεια · Μέγιστα FPS · Μέγιστα γραφικά · Ισορροπία.
+
+Στον δρόμο: η **καρτέλα 1** ανιχνεύει το μηχάνημα (το VRR δεν ανιχνεύεται — τσέκαρέ το μόνο
+αν βλέπεις το G-Sync **ενεργό** στον driver). Η **καρτέλα 2** είναι η λίστα ελέγχου του
+driver, Global και ανά παιχνίδι. Η **καρτέλα 3** είναι η λίστα του DCS. Δεν υπάρχει πουθενά
+κουμπί εφαρμογής· το _Λίστα για αντιγραφή_ βάζει τις γραμμές στο πρόχειρο.
+
+Η καρτέλα 2 διαβάζει τον driver μόνη της, με δύο δρόμους: πρώτα ζητάει από το NVAPI κάθε
+τιμή ξεχωριστά (χωρίς αρχείο, χωρίς κωδικοποίηση να πάει στραβά), κι αν αυτό δεν παίξει
+γράφει ολόκληρη τη βάση προφίλ σε αρχείο κειμένου και το διαβάζει. Αν αποτύχουν και τα
+δύο, βγαίνει παράθυρο με ό,τι ακριβώς απάντησε ο driver και κουμπί _Αντιγραφή_, ενώ ό,τι
+είχε ήδη διαβαστεί κρατιέται — μια αποτυχημένη ξαναανάγνωση δεν αδειάζει πια τη λίστα.
+
+Το **Αντιγραφή όλων** στην κάτω μπάρα βάζει σε ένα κείμενο το υλικό, τη λίστα του driver
+και τις 39 ρυθμίσεις του DCS, με `=` σε όσες ήδη ταιριάζουν και `->` σε όσες θέλουν
+αλλαγή. Κάθε αντιγραφή — αυτή, του driver και του DCS — ξεκινάει με το πλαίσιο της
+πρότασης: ημερομηνία, λειτουργία, στόχος, Multiplayer, χαμηλή πτήση, όριο FPS, μηχάνημα
+και διαδρομή του `options.lua`. Άδειος πίνακας DCS δεν είναι σφάλμα· σημαίνει ότι όλα
+είναι ήδη στον στόχο.
+
+Η καρτέλα 3 δείχνει επίσης τις **θέσεις Custom1/2/3 ως στήλες**, δίπλα στο «Τώρα» και τον
+«Στόχο»: `=` όπου η θέση έχει την ίδια τιμή με το ενεργό αρχείο, την τιμή όπου διαφέρει,
+`—` όπου το κλειδί δεν υπάρχει καθόλου στη θέση. Μια γραμμή πάνω από τον πίνακα δίνει την
+ημερομηνία αποθήκευσης της κάθε θέσης και ποια κλειδιά λείπουν από ποια. Χωρίς ξεχωριστό
+παράθυρο, και χωρίς ποτέ να γράφεται τίποτα σε εκείνα τα αρχεία. Το «Μόνο όσα αλλάζουν»
+ξεκινάει ξετσεκαρισμένο, οπότε η καρτέλα ανοίγει στη συνολική εικόνα· η επιλογή σου
+κρατιέται.
 
 ### Γραμμή εντολών
 
 ```bash
-python AstroTune_1_5beta.py --report [smooth|fps|quality|balanced] [--sp] [--low] [--vr] [--en]
+python AstroTune_1_7.py --report [smooth|fps|quality|balanced] [--sp] [--low] [--vr] [--en]
 ```
 
-| Διακόπτης | Τι κάνει |
-|---|---|
-| `--sp` | Single player (αλλιώς υποθέτει multiplayer) |
-| `--low` | Χαμηλή πτήση / ελικόπτερα |
-| `--vr` | Υπολογισμός για VR αντί για οθόνη |
-| `--en` | Έξοδος στα αγγλικά |
+| Διακόπτης | Τι κάνει                                    |
+| --------- | ------------------------------------------- |
+| `--sp`    | Single player (αλλιώς υποθέτει multiplayer) |
+| `--low`   | Χαμηλή πτήση / ελικόπτερα                   |
+| `--vr`    | Υπολογισμός για VR αντί για οθόνη           |
+| `--en`    | Έξοδος στα αγγλικά                          |
 
 Ένα `AstroTune.exe` χτισμένο με `--noconsole` δεν έχει πού να τα τυπώσει. Χρησιμοποίησε το
 `.py`, ή χτίσε δεύτερο exe με `--console`.
 
 ### Πού γράφει αρχεία
 
-| Διαδρομή | Τι είναι |
-|---|---|
-| `%USERPROFILE%\.astrotune.json` | Θέμα, γλώσσα, στόχος, αποθηκευμένη σύνθεση. Σβήσ' το και ξεκινάει καθαρό. |
-| `%USERPROFILE%\.astrotune_exports\` | Τα exports του driver, απλό κείμενο. Σβήνονται ελεύθερα. |
-| `…\Saved Games\DCS*\Config\AstroTune_backups\` | Αντίγραφα του `options.lua` πριν από κάθε εγγραφή. **Μην τα σβήσεις.** |
+| Διαδρομή                            | Τι είναι                                                                               |
+| ----------------------------------- | -------------------------------------------------------------------------------------- |
+| `%USERPROFILE%\.astrotune.json`     | Θέμα, γλώσσα, στόχος, αποθηκευμένη σύνθεση. Σβήσ' το και ξεκινάει καθαρό.              |
+| `%USERPROFILE%\.astrotune_exports\` | Αντίγραφο των προφίλ του driver, για να τα διαβάσει. Απλό κείμενο. Σβήνονται ελεύθερα. |
+
+Και τα δύο δικά του, στο προφίλ σου. Τίποτα μέσα στο DCS, τίποτα στο μητρώο.
 
 ### Χτίσιμο της έκδοσης
 
-Βάλε το `build.bat` δίπλα στο `AstroTune_1_5beta.py` και κάνε διπλό κλικ. Βρίσκει την
+Βάλε το `build.bat` δίπλα στο `AstroTune_1_7.py` και κάνε διπλό κλικ. Βρίσκει την
 Python, εγκαθιστά το PyInstaller αν λείπει, φτιάχνει τους φακέλους που περιμένει το Inno,
 χτίζει το exe και σου λέει τι λείπει ακόμα. Ή με το χέρι:
 
@@ -256,7 +316,7 @@ Python, εγκαθιστά το PyInstaller αν λείπει, φτιάχνει 
 pip install pyinstaller
 pyinstaller --onefile --noconsole --name AstroTune ^
             --distpath build --workpath build\tmp --specpath build ^
-            AstroTune_1_5beta.py
+            AstroTune_1_7.py
 ```
 
 Μετά μεταγλώττισε το `AstroTune_Setup.iss` με Inno Setup 6.3+. Το script περιμένει:
@@ -274,7 +334,7 @@ dist\                      <- εδώ βγαίνει το τελικό Setup.exe
 προσωρινό φάκελο κάθε φορά· το `--onedir` όχι.
 
 Ο οδηγός εγκατάστασης βγαίνει μόνο στα αγγλικά αν λείπει το `Greek.isl`, γιατί τα ελληνικά
-είναι *ανεπίσημη* μετάφραση του Inno Setup και δεν έρχονται μαζί του. Βάλ' το σε φάκελο
+είναι _ανεπίσημη_ μετάφραση του Inno Setup και δεν έρχονται μαζί του. Βάλ' το σε φάκελο
 `languages\` δίπλα στο `.iss` (ή στο `Languages\` του Inno) και το script το βρίσκει μόνο
 του. Αφορά μόνο τον οδηγό — το ίδιο το πρόγραμμα είναι δίγλωσσο ούτως ή άλλως.
 
