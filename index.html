@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="el" class="lang-el theme-dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AstroTune 2.1 — Manual</title>
+<style>
+  :root{
+    --bg:#0d0d0d; --surface:#1e1e1e; --surface2:#161616;
+    --rule:#2e2e2e; --rule-soft:#242424;
+    --ink:#ffffff; --ink2:#9a9a9a; --ink3:#6e6e6e;
+    --accent:#7fb8dc; --accent-dim:#4d7c96;
+    --ok:#6fbf87; --change:#e3a355; --watch:#e0736b;
+    --ok-bg:#16281c; --change-bg:#2e2312; --watch-bg:#2e1a18;
+    --code-bg:#141414;
+  }
+  html.theme-light{
+    --bg:#f2f2f2; --surface:#ffffff; --surface2:#e9e9e9;
+    --rule:#cfcfcf; --rule-soft:#e2e2e2;
+    --ink:#101010; --ink2:#555555; --ink3:#7a7a7a;
+    --accent:#1f6fa5; --accent-dim:#5b93b5;
+    --ok:#2e7d4f; --change:#a9651b; --watch:#b3342c;
+    --ok-bg:#e3f1e8; --change-bg:#f8eede; --watch-bg:#fae5e3;
+    --code-bg:#f6f6f6;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:15px/1.75 "Segoe UI",system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  html.lang-el .en,html.lang-en .el{display:none}
+
+  /* ---- σκελετός ---- */
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px;
+        display:grid;grid-template-columns:230px 1fr;gap:34px}
+  header{border-bottom:1px solid var(--rule);background:var(--surface2);
+         position:sticky;top:0;z-index:20}
+  .hbar{max-width:1180px;margin:0 auto;padding:12px 20px;
+        display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  .brand{font-size:19px;font-weight:600;letter-spacing:.2px}
+  .brand span{color:var(--accent)}
+  .sub{color:var(--ink2);font-size:13px}
+  .toggles{margin-left:auto;display:flex;gap:8px}
+  button.tg{
+    background:transparent;color:var(--ink2);border:1px solid var(--rule);
+    border-radius:5px;padding:5px 11px;font:inherit;font-size:13px;cursor:pointer;
+  }
+  button.tg:hover{color:var(--ink);border-color:var(--accent-dim)}
+  button.tg b{color:var(--accent);font-weight:600}
+
+  nav{position:sticky;top:64px;align-self:start;padding:26px 0 40px;
+      max-height:calc(100vh - 80px);overflow:auto}
+  nav a{display:block;color:var(--ink2);text-decoration:none;font-size:13.5px;
+        padding:5px 10px;border-left:2px solid transparent;line-height:1.45}
+  nav a:hover{color:var(--ink);background:var(--surface2)}
+  nav a.on{color:var(--accent);border-left-color:var(--accent)}
+
+  main{padding:26px 0 90px;min-width:0}
+  section{margin:0 0 46px;scroll-margin-top:76px}
+  h1{font-size:27px;margin:0 0 10px;line-height:1.25}
+  h2{font-size:20px;margin:0 0 14px;padding-bottom:8px;
+     border-bottom:1px solid var(--rule);line-height:1.3}
+  h3{font-size:15.5px;margin:22px 0 8px;color:var(--accent)}
+  p{margin:0 0 12px}
+  ul,ol{margin:0 0 12px;padding-left:22px}
+  li{margin:0 0 6px}
+  code{background:var(--code-bg);border:1px solid var(--rule-soft);border-radius:4px;
+       padding:1px 5px;font-family:Consolas,"SF Mono",Menlo,monospace;font-size:13px;
+       word-break:break-word}
+  pre{background:var(--code-bg);border:1px solid var(--rule);border-radius:7px;
+      padding:13px 15px;overflow-x:auto;margin:0 0 14px}
+  pre code{background:none;border:0;padding:0;font-size:12.5px;line-height:1.7}
+  table{width:100%;border-collapse:collapse;margin:0 0 16px;font-size:13.5px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule-soft);
+        vertical-align:top}
+  th{color:var(--accent);font-weight:600;border-bottom:1px solid var(--rule);
+     white-space:nowrap}
+  td code{white-space:nowrap}
+  .note{border-left:3px solid var(--accent);background:var(--surface);
+        padding:11px 15px;border-radius:0 6px 6px 0;margin:0 0 16px}
+  .warn{border-left-color:var(--change);background:var(--change-bg)}
+  .stop{border-left-color:var(--watch);background:var(--watch-bg)}
+  .good{border-left-color:var(--ok);background:var(--ok-bg)}
+  .note p:last-child{margin:0}
+  .lead{color:var(--ink2);font-size:16px;margin-bottom:22px}
+  .tag{display:inline-block;font-size:11.5px;letter-spacing:.4px;padding:2px 7px;
+       border-radius:4px;border:1px solid var(--rule);color:var(--ink2);
+       vertical-align:1px}
+  .tag.ro{color:var(--ok);border-color:var(--ok)}
+  .tag.rw{color:var(--change);border-color:var(--change)}
+  footer{border-top:1px solid var(--rule);color:var(--ink3);font-size:13px;
+         padding:18px 0 40px;margin-top:20px}
+  kbd{background:var(--surface);border:1px solid var(--rule);border-bottom-width:2px;
+      border-radius:4px;padding:1px 6px;font-size:12px;font-family:inherit}
+  @media (max-width:880px){
+    /* Σε στενή οθόνη οι πίνακες κυλούν οριζόντια μόνοι τους αντί να σπρώχνουν
+       ολόκληρη τη σελίδα, και τα μονοπάτια επιτρέπεται να σπάνε. */
+    table{display:block;overflow-x:auto;max-width:100%}
+    th{white-space:normal}
+    td code{white-space:normal}
+    code{word-break:break-all}
+    pre{max-width:100%}
+    .wrap{grid-template-columns:1fr;gap:0}
+    nav{position:static;max-height:none;padding:16px 0 0;
+        display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--rule)}
+    nav a{border-left:0;border-bottom:2px solid transparent;padding:5px 9px}
+    nav a.on{border-left:0;border-bottom-color:var(--accent)}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hbar">
+    <div class="brand">Astro<span>Tune</span> 2.1</div>
+    <div class="sub">
+      <span class="el">Οδηγός χρήσης · DCS 2026© for LOCK-ON GREECE by =GR= Astr0</span>
+      <span class="en">User manual · DCS 2026© for LOCK-ON GREECE by =GR= Astr0</span>
+    </div>
+    <div class="toggles">
+      <button class="tg" id="btnLang" type="button"></button>
+      <button class="tg" id="btnTheme" type="button"></button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav id="nav">
+  <a href="#what"><span class="el">Τι κάνει</span><span class="en">What it does</span></a>
+  <a href="#install"><span class="el">Εγκατάσταση</span><span class="en">Installation</span></a>
+  <a href="#start"><span class="el">Πρώτο άνοιγμα</span><span class="en">First launch</span></a>
+  <a href="#tab1"><span class="el">1 · Σύνθεση PC</span><span class="en">1 · PC build</span></a>
+  <a href="#tab2"><span class="el">2 · Κάρτα γραφικών</span><span class="en">2 · Graphics card</span></a>
+  <a href="#tab3"><span class="el">3 · Ρυθμίσεις DCS</span><span class="en">3 · DCS settings</span></a>
+  <a href="#slots"><span class="el">Θέσεις Custom</span><span class="en">Custom slots</span></a>
+  <a href="#safety"><span class="el">Μόνο ανάγνωση</span><span class="en">Read only</span></a>
+  <a href="#files"><span class="el">Πού γράφει</span><span class="en">Files it writes</span></a>
+  <a href="#cli"><span class="el">Γραμμή εντολών</span><span class="en">Command line</span></a>
+  <a href="#logic"><span class="el">Η λογική πίσω του</span><span class="en">The reasoning</span></a>
+  <a href="#limits"><span class="el">Τι δεν ξέρει</span><span class="en">What it doesn't know</span></a>
+  <a href="#faq"><span class="el">Προβλήματα</span><span class="en">Troubleshooting</span></a>
+</nav>
+
+<main>
+
+<!-- ================= ΤΙ ΚΑΝΕΙ ================= -->
+<section id="what">
+  <h1><span class="el">Τι κάνει το AstroTune</span><span class="en">What AstroTune does</span></h1>
+
+  <p class="lead">
+    <span class="el">Διαβάζει τις πραγματικές σου ρυθμίσεις DCS και το προφίλ του driver,
+      αναγνωρίζει τη σύνθεση του μηχανήματος, και σου λέει τι να αλλάξεις για τον στόχο
+      που διαλέγεις — σε οθόνη ή σε VR.</span>
+    <span class="en">It reads your actual DCS settings and your driver profile, works out
+      what hardware you have, and tells you what to change for the goal you pick — on a
+      monitor or in VR.</span>
+  </p>
+
+  <p>
+    <span class="el">Δεν είναι λίστα «βάλε αυτά». Κάθε πρόταση βγαίνει από τις τιμές που
+      έχεις <em>τώρα</em> στο αρχείο σου, σταθμισμένες με την κάρτα, τον επεξεργαστή, τη
+      VRAM, την ανάλυση και το αν παίζεις multiplayer. Η ίδια ρύθμιση παίρνει άλλη
+      απάντηση σε 8GB και άλλη σε 24GB.</span>
+    <span class="en">It is not a list of "just set these". Every suggestion starts from the
+      values you have <em>right now</em> in your own file, weighted by your card, CPU,
+      VRAM, resolution and whether you fly multiplayer. The same setting gets a different
+      answer on 8GB than on 24GB.</span>
+  </p>
+
+  <h3><span class="el">Με μια ματιά</span><span class="en">At a glance</span></h3>
+  <ul>
+    <li><span class="el"><b>39 ρυθμίσεις</b> του DCS που έχουν μετρήσιμο κόστος
+      (36 από τα graphics, 3 από το κόκπιτ).</span>
+      <span class="en"><b>39 DCS settings</b> that carry a measurable cost
+      (36 graphics, 3 cockpit).</span></li>
+    <li><span class="el"><b>Τέσσερις επιλογές, μία διαδρομή</b>: VR ή Οθόνη →
+      Multiplayer ή Single Player → Χαμηλή πτήση ή όχι → ένας από τους τέσσερις
+      στόχους.</span>
+      <span class="en"><b>Four choices, one path</b>: VR or Monitor → Multiplayer or
+      Single Player → Low level or not → one of the four goals.</span></li>
+    <li><span class="el"><b>44 κάρτες γραφικών, 27 επεξεργαστές, 12 headsets</b> στη
+      βάση, συν αυτόματη ανίχνευση.</span>
+      <span class="en"><b>44 graphics cards, 27 CPUs, 12 headsets</b> in the database,
+      plus automatic detection.</span></li>
+    <li><span class="el"><b>Λίστα ελέγχου για τον driver</b>: 13 σημεία για NVIDIA,
+      11 για AMD, χωρισμένα σε Global και ανά παιχνίδι.</span>
+      <span class="en"><b>Driver checklist</b>: 13 items for NVIDIA, 11 for AMD, split
+      into Global and per-application.</span></li>
+    <li><span class="el"><b>Ελληνικά και αγγλικά</b>, σκούρο και ανοιχτό θέμα.</span>
+      <span class="en"><b>Greek and English</b>, dark and light theme.</span></li>
+  </ul>
+
+  <div class="note stop" id="disclaimer">
+    <p><span class="el"><b>Ευθύνη χρήσης.</b> Η χρήση του προγράμματος και των ρυθμίσεων
+      που προτείνει γίνεται με <b>ΑΠΟΚΛΕΙΣΤΙΚΗ ΕΥΘΥΝΗ ΤΟΥ ΧΡΗΣΤΗ</b>. Οι προτάσεις είναι
+      εκτιμήσεις βασισμένες σε μετρήσεις και εμπειρία, όχι εγγυήσεις. Έλεγξε κάθε τιμή
+      πριν την εφαρμόσεις, και κράτα αντίγραφο του <code>options.lua</code> σου πριν από
+      μεγάλες αλλαγές.</span>
+      <span class="en"><b>Your responsibility.</b> Use of this program and of the settings
+      it suggests is <b>ENTIRELY AT THE USER'S OWN RISK</b>. The suggestions are estimates
+      based on measurement and experience, not guarantees. Check every value before you
+      apply it, and keep a copy of your <code>options.lua</code> before making large
+      changes.</span></p>
+  </div>
+
+  <div class="note good">
+    <p><span class="el"><b>Ο κανόνας με μία πρόταση:</b> το AstroTune <b>δεν αλλάζει
+      καμία ρύθμιση</b> — ούτε στα Windows, ούτε στον driver γραφικών, ούτε στο DCS.
+      Διαβάζει, υπολογίζει, και σου δείχνει τι να βάλεις. Τις αλλαγές τις κάνεις εσύ.</span>
+      <span class="en"><b>The rule in one sentence:</b> AstroTune <b>changes no
+      setting</b> — not in Windows, not in your graphics driver, not in DCS. It reads,
+      works it out, and shows you what to set. You make the changes yourself.</span></p>
+  </div>
+</section>
+
+<!-- ================= ΕΓΚΑΤΑΣΤΑΣΗ ================= -->
+<section id="install">
+  <h2><span class="el">Εγκατάσταση</span><span class="en">Installation</span></h2>
+
+  <h3><span class="el">Με το installer</span><span class="en">With the installer</span></h3>
+  <p>
+    <span class="el">Τρέξε το <code>AstroTune_2.1_Setup.exe</code>. Δεν ζητάει
+      δικαιώματα διαχειριστή, δεν γράφει στο μητρώο, και εγκαθίσταται μόνο για τον
+      λογαριασμό σου εκτός αν του πεις αλλιώς στην πρώτη οθόνη. Θέλει Windows 10 ή
+      νεότερα, 64bit.</span>
+    <span class="en">Run <code>AstroTune_2.1_Setup.exe</code>. It does not ask for
+      administrator rights, writes nothing to the registry, and installs for your account
+      only unless you tell it otherwise on the first screen. Windows 10 or newer,
+      64-bit.</span>
+  </p>
+
+  <h3><span class="el">Από το script</span><span class="en">From the script</span></h3>
+  <p>
+    <span class="el">Το AstroTune είναι ένα αρχείο Python χωρίς εξαρτήσεις. Αν έχεις
+      Python 3.10 ή νεότερη, κάνε διπλό κλικ στο <code>AstroTune_1_7.py</code> ή
+      τρέξε:</span>
+    <span class="en">AstroTune is a single Python file with no dependencies. With Python
+      3.10 or newer installed, double-click <code>AstroTune_1_7.py</code> or
+      run:</span>
+  </p>
+<pre><code>python AstroTune_1_7.py</code></pre>
+  <p>
+    <span class="el">Δοκιμασμένο σε Python 3.10, 3.11, 3.12 και 3.13. Χρειάζεται μόνο το
+      <code>tkinter</code>, που έρχεται μαζί με την Python στα Windows. Ένα προαιρετικό
+      πακέτο, το <code>pynvml</code> (<code>pip install nvidia-ml-py</code>), προσθέτει
+      ζωντανή ένδειξη VRAM και ακριβή γενιά PCIe — χωρίς αυτό όλα τα υπόλοιπα
+      δουλεύουν κανονικά.</span>
+    <span class="en">Tested on Python 3.10, 3.11, 3.12 and 3.13. It only needs
+      <code>tkinter</code>, which ships with Python on Windows. One optional package,
+      <code>pynvml</code> (<code>pip install nvidia-ml-py</code>), adds live VRAM
+      readout and the exact PCIe generation — everything else works fine without it.</span>
+  </p>
+
+  <div class="note">
+    <p><span class="el">Το πρόγραμμα τρέχει και σε Linux για ανάγνωση και αναφορά, αλλά
+      η ανίχνευση υλικού, η ανάγνωση του driver και η αλλαγή refresh rate είναι
+      λειτουργίες των Windows.</span>
+      <span class="en">The program also runs on Linux for reading and reporting, but
+      hardware detection, driver reading and the refresh-rate change are Windows
+      features.</span></p>
+  </div>
+</section>
+
+<!-- ================= ΠΡΩΤΟ ΑΝΟΙΓΜΑ ================= -->
+<section id="start">
+  <h2><span class="el">Πρώτο άνοιγμα: VR ή Οθόνη</span><span class="en">First launch: VR or Monitor</span></h2>
+  <p>
+    <span class="el">Κάθε φορά που ανοίγει, το AstroTune ρωτάει πρώτα αν πετάς σε οθόνη ή
+      με headset. Δεν είναι καλλωπιστική ερώτηση: σε VR αλλάζουν <em>ποιες</em> ρυθμίσεις
+      μετράνε, <em>πόσο</em> κοστίζουν, και ολόκληρη η στρατηγική του frame cap.</span>
+    <span class="en">Every time it opens, AstroTune first asks whether you fly on a monitor
+      or in a headset. This is not a cosmetic choice: in VR it changes <em>which</em>
+      settings matter, <em>what</em> they cost, and the entire frame-cap strategy.</span>
+  </p>
+  <p>
+    <span class="el">Αν πετάς πάντα με τον ίδιο τρόπο, τσέκαρε το «Θυμήσου την επιλογή και
+      μη με ξαναρωτήσεις». Μπορείς να αλλάξεις όποτε θες από το κουμπί
+      <kbd>Λειτουργία ⇄</kbd> κάτω δεξιά.</span>
+    <span class="en">If you always fly the same way, tick "Remember this choice and stop
+      asking". You can switch at any time from the <kbd>Mode ⇄</kbd> button at the bottom
+      right.</span>
+  </p>
+  <p>
+    <span class="el">Πάνω αριστερά και πάνω δεξιά αλλάζεις θέμα και γλώσσα. Η επιλογή σου
+      κρατιέται για την επόμενη φορά. Την πρώτη φορά ξεκινάει σε σκούρο θέμα και
+      αγγλικά.</span>
+    <span class="en">Theme and language are at the top left and top right. Your choice is
+      remembered for next time. On a fresh install it starts in dark theme and
+      English.</span>
+  </p>
+</section>
+
+<!-- ================= TAB 1 ================= -->
+<section id="tab1">
+  <h2><span class="el">Καρτέλα 1 · Σύνθεση PC</span><span class="en">Tab 1 · PC build</span></h2>
+  <p>
+    <span class="el">Εδώ ορίζεται το «πόσα αντέχει το μηχάνημα», και από αυτό βγαίνουν
+      όλα τα υπόλοιπα. Πάτα <kbd>Ανίχνευση αυτού του PC</kbd> και συμπληρώνονται μόνα
+      τους όσα μπορούν να βρεθούν.</span>
+    <span class="en">This is where "how much the machine can take" is decided, and
+      everything else follows from it. Press <kbd>Detect this PC</kbd> and whatever can be
+      found fills itself in.</span>
+  </p>
+
+  <table>
+    <tr>
+      <th><span class="el">Πεδίο</span><span class="en">Field</span></th>
+      <th><span class="el">Από πού βρίσκεται</span><span class="en">Where it comes from</span></th>
+    </tr>
+    <tr><td><span class="el">Κάρτα γραφικών</span><span class="en">Graphics card</span></td>
+      <td><span class="el">NVML αν υπάρχει, αλλιώς μητρώο, αλλιώς PowerShell. Η VRAM
+        διαβάζεται από το <code>qwMemorySize</code> του μητρώου, που είναι 64bit — το
+        <code>AdapterRAM</code> του WMI κολλάει στα 4GB και λέει ψέματα.</span>
+        <span class="en">NVML if present, else the registry, else PowerShell. VRAM comes
+        from the registry's 64-bit <code>qwMemorySize</code> — WMI's
+        <code>AdapterRAM</code> caps at 4GB and lies.</span></td></tr>
+    <tr><td><span class="el">Επεξεργαστής</span><span class="en">Processor</span></td>
+      <td><code>ProcessorNameString</code>
+        <span class="el">από το μητρώο. Τα X3D παίρνουν bonus, γιατί το DCS αγαπάει την
+        cache.</span>
+        <span class="en">from the registry. X3D chips get a bonus, because DCS loves
+        cache.</span></td></tr>
+    <tr><td>RAM</td>
+      <td><code>GlobalMemoryStatusEx</code>
+        <span class="el">— ορίζει το ταβάνι του Preload Radius.</span>
+        <span class="en">— it sets the ceiling for Preload Radius.</span></td></tr>
+    <tr><td><span class="el">Δίσκος του DCS</span><span class="en">DCS drive</span></td>
+      <td><span class="el">Ο τύπος του δίσκου όπου ζει το <code>options.lua</code>. Αργός
+        δίσκος περιορίζει το preload και φέρνει κοψίματα.</span>
+        <span class="en">The media type of the drive holding <code>options.lua</code>. A
+        slow drive caps preload and causes stutter.</span></td></tr>
+    <tr><td><span class="el">Οθόνη &amp; refresh</span><span class="en">Monitor &amp; refresh</span></td>
+      <td><span class="el">Από το σύστημα· το μοντέλο από τον περιγραφέα 0xFC του
+        EDID.</span>
+        <span class="en">From the display system; the model from EDID descriptor
+        0xFC.</span></td></tr>
+    <tr><td><span class="el">Μητρική</span><span class="en">Motherboard</span></td>
+      <td><span class="el">Από τα πεδία SMBIOS του μητρώου. Σε έτοιμα συστήματα που λένε
+        «To be filled by O.E.M.» πέφτει στο μοντέλο συστήματος.</span>
+        <span class="en">From the registry's SMBIOS fields. On prebuilts that say "To be
+        filled by O.E.M." it falls back to the system model.</span></td></tr>
+  </table>
+
+  <div class="note warn">
+    <p><span class="el"><b>Το VRR δεν ανιχνεύεται και δεν πρέπει να το τσεκάρεις στα
+      τυφλά.</b> Μια οθόνη μπορεί να γράφει FreeSync και να μην το δίνει μέσω HDMI σε
+      κάρτα NVIDIA. Τσέκαρέ το μόνο αν βλέπεις το G-Sync <em>ενεργό</em> στον driver. Είναι
+      η πιο καθοριστική επιλογή ολόκληρης της καρτέλας: αλλάζει τη στρατηγική του frame
+      cap από τη βάση της.</span>
+      <span class="en"><b>VRR cannot be detected, and you should not tick it blindly.</b>
+      A monitor may advertise FreeSync yet not deliver it over HDMI to an NVIDIA card.
+      Tick it only if you can see G-Sync <em>active</em> in the driver. It is the single
+      most consequential choice on this tab: it changes the whole frame-cap strategy.</span></p>
+  </div>
+
+  <h3><span class="el">Η αναφορά από κάτω</span><span class="en">The report below</span></h3>
+  <p>
+    <span class="el">Το πλαίσιο κειμένου δείχνει τι βρέθηκε, τι δεν βρέθηκε, και το
+      προτεινόμενο frame cap με την αιτιολόγησή του. Αν προτείνει αλλαγή refresh rate, το
+            σου λέει ποιο να βάλεις — δεν το αλλάζει μόνο του. Το refresh το ορίζεις εσύ από
+      τις ρυθμίσεις οθόνης των Windows. Με το <kbd>Αντιγραφή αναφοράς</kbd> παίρνεις
+      ολόκληρο το κείμενο στο πρόχειρο.</span>
+    <span class="en">The text box shows what was found, what wasn't, and the suggested
+      frame cap with its reasoning. If a different refresh rate would be better it tells
+      you which one — it does not change it. You set the refresh rate yourself in Windows
+      display settings. <kbd>Copy report</kbd> puts the whole text on the clipboard.</span>
+  </p>
+  <p>
+    <span class="el">Με <kbd>Αποθήκευση…</kbd> και <kbd>Φόρτωση…</kbd> κρατάς τη σύνθεση
+      σε αρχείο <code>.json</code> — χρήσιμο αν στήνεις ρυθμίσεις για μηχάνημα άλλου, ή
+      αν θες να συγκρίνεις δύο διαμορφώσεις.</span>
+    <span class="en">Use <kbd>Save…</kbd> and <kbd>Load…</kbd> to keep a build in a
+      <code>.json</code> file — handy if you are tuning for someone else's machine, or
+      comparing two configurations.</span>
+  </p>
+</section>
+
+<!-- ================= TAB 2 ================= -->
+<section id="tab2">
+  <h2><span class="el">Καρτέλα 2 · Κάρτα γραφικών</span><span class="en">Tab 2 · Graphics card</span></h2>
+  <p><span class="tag ro">
+    <span class="el">ΜΟΝΟ ΑΝΑΓΝΩΣΗ</span><span class="en">READ ONLY</span></span></p>
+  <p>
+    <span class="el">Λίστα ελέγχου για τον driver, χωρισμένη σε δύο υποκαρτέλες:</span>
+    <span class="en">A driver checklist, split into two sub-tabs:</span>
+  </p>
+  <ul>
+    <li><b>Global Settings</b> —
+      <span class="el">ό,τι ισχύει για όλα τα παιχνίδια.</span>
+      <span class="en">what applies to every game.</span></li>
+    <li><b>DCS Settings</b> —
+      <span class="el">το προφίλ του DCS ξεχωριστά. Οι τιμές εδώ υπερισχύουν των
+        global.</span>
+      <span class="en">the DCS profile on its own. These values override the global
+        ones.</span></li>
+  </ul>
+  <p>
+    <span class="el">Όταν έχεις διαλέξει VR, η λίστα αλλάζει: κάποια πεδία έχουν άλλη
+      σωστή τιμή με headset και το πρόγραμμα το λέει ρητά στη στήλη της αιτιολόγησης.</span>
+    <span class="en">When VR is selected the list changes: some fields have a different
+      correct value with a headset, and the program says so explicitly in the reason
+      column.</span>
+  </p>
+
+  <div class="note stop">
+    <p><span class="el"><b>Γιατί μόνο προεπισκόπηση.</b> Η βάση προφίλ του driver είναι
+      <em>κοινή για όλα τα παιχνίδια</em> του μηχανήματος. Μια λάθος εγγραφή εκεί δεν θα
+      χαλούσε μόνο το DCS. Δεν υπάρχει καλός λόγος να το ρισκάρει ένα εργαλείο που μπορεί
+      απλώς να σου πει τι να πατήσεις — οι κλήσεις NVAPI εδώ είναι αποκλειστικά
+      ανάγνωσης.</span>
+      <span class="en"><b>Why preview only.</b> The driver profile database is
+      <em>shared across every game</em> on the machine. A bad write there would not only
+      break DCS. There is no good reason for a tool to take that risk when it can simply
+      tell you what to click — the NVAPI calls here are read-only.</span></p>
+  </div>
+
+  <h3><span class="el">Η στήλη «Κατάσταση»</span><span class="en">The "State" column</span></h3>
+  <p>
+    <span class="el">Την πρώτη φορά που ανοίγεις αυτή την καρτέλα, το πρόγραμμα διαβάζει
+      μόνο του τις τρέχουσες ρυθμίσεις του driver και τις συγκρίνει με τον στόχο. Δεν
+      χρειάζεται να πατήσεις τίποτα. Δίπλα στο «Driver:» γράφει από πού ήρθαν οι τιμές:
+      <em>διαβάστηκε απευθείας από τον driver</em> (χωρίς αρχείο) ή <em>διαβάστηκε ·
+      Ν προφίλ</em> (από export).</span>
+    <span class="en">The first time you open this tab, the program reads your current
+      driver settings by itself and compares them with the target. You do not have to
+      press anything. Next to "Driver:" it says where the values came from:
+      <em>read straight from the driver</em> (no file) or <em>read · N profiles</em>
+      (from an export).</span>
+  </p>
+  <table>
+    <tr><th><span class="el">Τι λέει</span><span class="en">What it says</span></th>
+        <th><span class="el">Τι σημαίνει</span><span class="en">What it means</span></th></tr>
+    <tr><td><b>OK (τιμή)</b></td>
+        <td><span class="el">Είναι ήδη όπως πρέπει.</span>
+            <span class="en">Already as it should be.</span></td></tr>
+    <tr><td><span class="el"><b>είναι …</b></span><span class="en"><b>is …</b></span></td>
+        <td><span class="el">Διαφέρει από τον στόχο — αυτό αλλάζεις.</span>
+            <span class="en">Differs from the target — this is what you change.</span></td></tr>
+    <tr><td><span class="el"><b>δεν έχει οριστεί</b></span><span class="en"><b>not set</b></span></td>
+        <td><span class="el">Δεν υπάρχει στο προφίλ· ισχύει η προεπιλογή του driver.</span>
+            <span class="en">Not in the profile; the driver default applies.</span></td></tr>
+    <tr><td><span class="el"><b>(από Global)</b></span><span class="en"><b>(from Global)</b></span></td>
+        <td><span class="el">Δεν έχει οριστεί για το DCS· κληρονομείται από τα Global.</span>
+            <span class="en">Not set for DCS; inherited from Global.</span></td></tr>
+    <tr><td><span class="el"><b>δεν ελέγχεται</b></span><span class="en"><b>not checked</b></span></td>
+        <td><span class="el">Δεν ξέρουμε με βεβαιότητα σε ποιο εσωτερικό ID αντιστοιχεί,
+          οπότε δεν ισχυριζόμαστε τίποτα. Δες το μόνος σου.</span>
+          <span class="en">We do not know its internal ID for certain, so we claim
+          nothing. Check it yourself.</span></td></tr>
+    <tr><td><b>≈</b></td>
+        <td><span class="el">Ο έλεγχος είναι πιθανός αλλά όχι πλήρως επιβεβαιωμένος.</span>
+            <span class="en">The check is probable but not fully confirmed.</span></td></tr>
+  </table>
+  <p>
+    <span class="el">Το κουμπί αντιγραφής βάζει ολόκληρη τη λίστα στο πρόχειρο, σε μορφή
+      που κολλάει καθαρά σε Discord ή forum.</span>
+    <span class="en">The copy button puts the whole list on the clipboard, formatted to
+      paste cleanly into Discord or a forum.</span>
+  </p>
+</section>
+
+<!-- ================= TAB 3 ================= -->
+<section id="tab3">
+  <h2><span class="el">Καρτέλα 3 · Ρυθμίσεις DCS</span><span class="en">Tab 3 · DCS settings</span></h2>
+  <p><span class="tag ro">
+    <span class="el">ΜΟΝΟ ΑΝΑΓΝΩΣΗ</span><span class="en">READ ONLY</span></span></p>
+
+  <h3><span class="el">Το αρχείο</span><span class="en">The file</span></h3>
+  <p>
+    <span class="el">Το <code>options.lua</code> εντοπίζεται μόνο του σε
+      <code>Saved Games\DCS</code>, <code>DCS.openbeta</code> ή <code>DCS.release</code>.
+      Με <kbd>Άνοιγμα…</kbd> δείχνεις άλλο, με <kbd>Επαναφόρτωση</kbd> το ξαναδιαβάζει —
+      χρήσιμο αφού αλλάξεις κάτι μέσα στο DCS.</span>
+    <span class="en">Your <code>options.lua</code> is found automatically under
+      <code>Saved Games\DCS</code>, <code>DCS.openbeta</code> or <code>DCS.release</code>.
+      Use <kbd>Open…</kbd> to point at another one, <kbd>Reload</kbd> to re-read it —
+      useful after you change something inside DCS.</span>
+  </p>
+
+  <h3><span class="el">Η διαδρομή των επιλογών</span><span class="en">The decision path</span></h3>
+  <p>
+    <span class="el">Κάθε συνδυασμός δίνει διαφορετικό σύνολο ρυθμίσεων. Δεν είναι
+      φίλτρα πάνω σε μια ενιαία λίστα — αλλάζουν τα ίδια τα νούμερα.</span>
+    <span class="en">Every combination produces a different set of settings. These are not
+      filters over one list — the numbers themselves change.</span>
+  </p>
+  <ol>
+    <li><b><span class="el">VR ή Οθόνη</span><span class="en">VR or Monitor</span></b> —
+      <span class="el">ρωτιέται σε κάθε άνοιγμα.</span>
+      <span class="en">asked on every launch.</span></li>
+    <li><b><span class="el">Multiplayer ή Single Player</span><span class="en">Multiplayer or Single Player</span></b> —
+      <span class="el">σε γεμάτο server πέφτει ό,τι κοστίζει σε CPU και VRAM.</span>
+      <span class="en">on a full server, whatever costs CPU and VRAM comes down.</span></li>
+    <li><b><span class="el">Χαμηλή πτήση ή όχι</span><span class="en">Low level or not</span></b> —
+      <span class="el">ανεβαίνει ό,τι φαίνεται κοντά στο έδαφος, πέφτει ό,τι μετράει
+        μόνο ψηλά.</span>
+      <span class="en">what you can see near the ground goes up; what only matters at
+        altitude comes down.</span></li>
+    <li><b><span class="el">Ο στόχος</span><span class="en">The goal</span></b> —
+      <span class="el">ένας από τους τέσσερις παρακάτω.</span>
+      <span class="en">one of the four below.</span></li>
+  </ol>
+
+  <table>
+    <tr><th><span class="el">Στόχος</span><span class="en">Goal</span></th>
+        <th><span class="el">Τι δίνει προτεραιότητα</span><span class="en">What it prioritises</span></th></tr>
+    <tr><td><span class="el">Ομαλή κίνηση με ευκρίνεια</span><span class="en">Smooth motion with clarity</span></td>
+        <td><span class="el">Σταθερό frametime. Θυσιάζει ό,τι κοστίζει πολύ για λίγη
+          ορατή διαφορά.</span>
+          <span class="en">Stable frametime. Sacrifices whatever costs a lot for little
+          visible difference.</span></td></tr>
+    <tr><td><span class="el">Μέγιστα FPS</span><span class="en">Maximum FPS</span></td>
+        <td><span class="el">Ο αριθμός πάνω απ' όλα. Για competitive, ή για να βρεις πού
+          είναι το ταβάνι σου.</span>
+          <span class="en">The number above all. For competitive play, or to find where
+          your ceiling is.</span></td></tr>
+    <tr><td><span class="el">Μέγιστα γραφικά</span><span class="en">Maximum graphics</span></td>
+        <td><span class="el">Εικόνα, με σεβασμό στα όρια VRAM. Για screenshots και
+          ελαφριές αποστολές.</span>
+          <span class="en">Image quality, still respecting VRAM limits. For screenshots
+          and light missions.</span></td></tr>
+    <tr><td><span class="el">Ισορροπία</span><span class="en">Balanced</span></td>
+        <td><span class="el">Η μέση λύση όταν δεν θες να διαλέξεις.</span>
+          <span class="en">The middle road when you do not want to choose.</span></td></tr>
+  </table>
+
+  <div class="note good">
+    <p><span class="el">Δεν υπάρχει κουμπί «εφαρμογή». Το <kbd>Λίστα για αντιγραφή</kbd>
+      ανοίγει τις τσεκαρισμένες γραμμές σε παράθυρο με κουμπί <kbd>Αντιγραφή</kbd>, σε
+      μορφή που διαβάζεται δίπλα στην οθόνη του DCS ή κολλάει σε Discord. Από την 1.9
+      κάθε αντιγραφή ξεκινάει με το πλαίσιο της πρότασης — ημερομηνία, λειτουργία,
+      στόχος, Multiplayer, χαμηλή πτήση, όριο FPS, μηχάνημα και διαδρομή του
+      <code>options.lua</code> — ώστε το κείμενο να στέκεται και μόνο του.</span>
+      <span class="en">There is no "apply" button. <kbd>List to copy</kbd> opens the ticked
+      rows in a window with a <kbd>Copy</kbd> button, formatted to read next to the DCS
+      screen or to paste into Discord. Since 1.9 every copy starts with the context of
+      the suggestion — date, mode, goal, multiplayer, low level, FPS cap, machine and the
+      path of your <code>options.lua</code> — so the text stands on its own.</span></p>
+  </div>
+
+  <div class="note good">
+    <p><span class="el"><b>Αντιγραφή όλων</b> (κάτω μπάρα, δίπλα στην «Ευθύνη χρήσης»):
+      υλικό, λίστα του driver και και τις 39 ρυθμίσεις του DCS σε ένα κείμενο. Οι
+      ρυθμίσεις που ήδη ταιριάζουν σημειώνονται με <code>=</code>, όσες θέλουν αλλαγή με
+      <code>-&gt;</code>. Είναι το πλήρες αρχείο της ρύθμισής σου: για να το κρατήσεις,
+      να το στείλεις στο squadron, ή να το συγκρίνεις μετά από update του DCS.</span>
+      <span class="en"><b>Copy everything</b> (bottom bar, next to "Your responsibility"):
+      hardware, the driver checklist and all 39 DCS settings in one text. Settings that
+      already match are marked <code>=</code>, the ones that need changing
+      <code>-&gt;</code>. It is the full record of your setup — to keep, to send to your
+      squadron, or to compare after a DCS update.</span></p>
+  </div>
+
+  <p><span class="el">Το «Μόνο όσα αλλάζουν» είναι <b>ξετσεκαρισμένο</b> από την 2.1:
+    ανοίγοντας την καρτέλα βλέπεις και τις 39 ρυθμίσεις με τις τιμές τους και τις θέσεις
+    Custom. Τσέκαρέ το όταν θες μόνο τη λίστα δουλειάς. Η επιλογή σου κρατιέται για την
+    επόμενη φορά. Αν με το τικ ο πίνακας δείχνει μία μόνο γραμμή «Όλα ήδη στον στόχο»,
+    δεν έχει χαλάσει τίποτα: το <code>options.lua</code> σου είναι ήδη εκεί που θα το
+    πήγαινε το πρόγραμμα.</span>
+    <span class="en">"Only what changes" is <b>unticked</b> since 2.1: opening the tab
+    shows all 39 settings with their values and the Custom slots. Tick it when you want
+    just the to-do list. Your choice is remembered for next time. If, with it ticked, the
+    table shows a single "Everything is already on target" row, nothing is broken: your
+    <code>options.lua</code> is already where the program would put it.</span></p>
+
+  <h3><span class="el">Ο πίνακας</span><span class="en">The table</span></h3>
+  <table>
+    <tr><th><span class="el">Στήλη</span><span class="en">Column</span></th>
+        <th><span class="el">Τι δείχνει</span><span class="en">What it shows</span></th></tr>
+    <tr><td>✓</td>
+        <td><span class="el">Αν η αλλαγή θα εφαρμοστεί. Κλικ για εναλλαγή.</span>
+            <span class="en">Whether the change will be applied. Click to toggle.</span></td></tr>
+    <tr><td><span class="el">Πεδίο</span><span class="en">Field</span></td>
+        <td><span class="el">Με το όνομα που έχει στην οθόνη του DCS, όχι το κλειδί του
+          αρχείου.</span>
+          <span class="en">Named as it appears in the DCS screen, not as the file key.</span></td></tr>
+    <tr><td><span class="el">Τώρα</span><span class="en">Now</span></td>
+        <td><span class="el">Η τιμή που έχεις αυτή τη στιγμή.</span>
+            <span class="en">The value you have right now.</span></td></tr>
+    <tr><td><span class="el">Στόχος</span><span class="en">Target</span></td>
+        <td><span class="el">Η προτεινόμενη τιμή.</span>
+            <span class="en">The suggested value.</span></td></tr>
+    <tr><td><span class="el">Γιατί</span><span class="en">Why</span></td>
+        <td><span class="el">Ο λόγος, με νούμερα όπου υπάρχουν.</span>
+            <span class="en">The reason, with numbers where they exist.</span></td></tr>
+  </table>
+  <p>
+    <span class="el">Γραμμές με <span style="color:var(--change)">πορτοκαλί</span> διαφέρουν
+      από αυτό που έχεις· με <span style="color:var(--watch)">κόκκινο</span> είναι χαμηλής
+      βεβαιότητας και έρχονται <b>ξεμαρκαρισμένες</b> — πρέπει να τις τσεκάρεις εσύ. Το ίδιο ισχύει για
+      κάθε τιμή που το πρόγραμμα δεν αναγνωρίζει: την δείχνει ως «άγνωστη» και
+      <em>δεν</em> προτείνει αλλαγή, αντί να γράψει στα τυφλά.</span>
+    <span class="en">Rows in <span style="color:var(--change)">orange</span> change; rows
+      in <span style="color:var(--watch)">red</span> are low confidence and arrive
+      <b>unticked</b> — you have to tick them yourself. The same goes for any value the
+      program does not recognise: it shows it as "unknown" and suggests <em>no</em>
+      change, rather than writing blind.</span>
+  </p>
+</section>
+
+<!-- ================= ΘΕΣΕΙΣ ================= -->
+<section id="slots">
+  <h2><span class="el">Θέσεις Custom</span><span class="en">Custom slots</span></h2>
+  <p><span class="tag ro">
+    <span class="el">ΜΟΝΟ ΑΝΑΓΝΩΣΗ</span><span class="en">READ ONLY</span></span></p>
+  <p>
+    <span class="el">Μέχρι την 1.9 υπήρχε κουμπί <kbd>Θέσεις Custom…</kbd> που άνοιγε
+      ξεχωριστό παράθυρο σύγκρισης. Από την <b>2.0</b> το κουμπί έφυγε: οι θέσεις είναι
+      <b>στήλες του ίδιου πίνακα</b> στην καρτέλα 3, δίπλα στο «Τώρα» και στον «Στόχο».
+      Βλέπεις με μια ματιά τι έχει η κάθε θέση, χωρίς δεύτερο παράθυρο και χωρίς να
+      φορτώσεις τίποτα μέσα στο DCS.</span>
+    <span class="en">Up to 1.9 there was a <kbd>Custom slots…</kbd> button that opened a
+      separate comparison window. Since <b>2.0</b> the button is gone: the slots are
+      <b>columns of the same table</b> on tab 3, next to "Now" and "Target". You see what
+      each slot holds at a glance, with no second window and without loading anything
+      inside DCS.</span>
+  </p>
+  <table>
+    <tr><th><span class="el">Κελί</span><span class="en">Cell</span></th>
+        <th><span class="el">Τι σημαίνει</span><span class="en">What it means</span></th></tr>
+    <tr><td><b>=</b></td>
+        <td><span class="el">Η θέση έχει την ίδια τιμή με το ενεργό σου αρχείο.</span>
+            <span class="en">The slot holds the same value as your active file.</span></td></tr>
+    <tr><td><span class="el">μια τιμή</span><span class="en">a value</span></td>
+        <td><span class="el">Η θέση έχει άλλη τιμή — αυτή που γράφει.</span>
+            <span class="en">The slot holds a different value — the one shown.</span></td></tr>
+    <tr><td><b>—</b></td>
+        <td><span class="el">Το κλειδί δεν υπάρχει καθόλου μέσα σε εκείνη τη θέση.</span>
+            <span class="en">The key is not in that slot file at all.</span></td></tr>
+  </table>
+  <p>
+    <span class="el">Έτσι το μάτι πέφτει μόνο πάνω στις διαφορές: ό,τι ταυτίζεται γίνεται
+      ένα «=». Πάνω από τον πίνακα υπάρχει γραμμή με τα ονόματα των θέσεων, την
+      ημερομηνία αποθήκευσης της καθεμιάς, και ποια κλειδιά λείπουν από ποια. Αν δεν
+      υπάρχουν θέσεις, οι στήλες κρύβονται και το «Γιατί» ξαναπαίρνει τον χώρο
+      του.</span>
+    <span class="en">So your eye lands only on the differences: whatever matches becomes
+      a single "=". Above the table a line gives the slot names, each one's save date, and
+      which keys are missing from which. If there are no slots, the columns are hidden and
+      the "Why" column takes the space back.</span>
+  </p>
+  <div class="note">
+    <p><span class="el">Τα αρχεία των θέσεων ζουν στο
+      <code>Config\OptionsPresets\</code> και έχουν διαφορετική μορφή από το
+      <code>options.lua</code>: ρίζα <code>preset</code> αντί <code>options</code>, μόνο
+      graphics και κόκπιτ, και καθένα κρατάει όσα κλειδιά είχε το DCS τη στιγμή που
+      πάτησες SAVE. Γι' αυτό το AstroTune τα διαβάζει αλλά <b>δεν γράφει</b> σε αυτά.</span>
+      <span class="en">Slot files live in <code>Config\OptionsPresets\</code> and have a
+      different shape from <code>options.lua</code>: root <code>preset</code> instead of
+      <code>options</code>, graphics and cockpit only, and each one keeps whatever keys
+      DCS had at the moment you pressed SAVE. That is why AstroTune reads them but does
+      <b>not write</b> to them.</span></p>
+  </div>
+</section>
+
+<!-- ================= ΑΣΦΑΛΕΙΑ ================= -->
+<section id="safety">
+  <h2><span class="el">Μόνο ανάγνωση</span><span class="en">Read only</span></h2>
+
+  <table>
+    <tr><th><span class="el">Τι</span><span class="en">What</span></th>
+        <th><span class="el">Ανάγνωση</span><span class="en">Read</span></th>
+        <th><span class="el">Εγγραφή</span><span class="en">Write</span></th></tr>
+    <tr><td><span class="el">Ρυθμίσεις των Windows (refresh rate, μητρώο)</span><span class="en">Windows settings (refresh rate, registry)</span></td>
+        <td>✔</td><td><span class="el"><b>ποτέ</b></span><span class="en"><b>never</b></span></td></tr>
+    <tr><td><span class="el">Βάση προφίλ του driver (NVAPI)</span><span class="en">Driver profile database (NVAPI)</span></td>
+        <td>✔</td><td><span class="el"><b>ποτέ</b></span><span class="en"><b>never</b></span></td></tr>
+    <tr><td><code>options.lua</code></td>
+        <td>✔</td><td><span class="el"><b>ποτέ</b></span><span class="en"><b>never</b></span></td></tr>
+    <tr><td><code>Config\OptionsPresets\Custom*.lua</code></td>
+        <td>✔</td><td><span class="el"><b>ποτέ</b></span><span class="en"><b>never</b></span></td></tr>
+  </table>
+
+  <p>
+    <span class="el">Δεν είναι υπόσχεση του περιβάλλοντος χρήστη — είναι ιδιότητα του
+      κώδικα. Ο αναγνώστης του <code>options.lua</code> <b>δεν έχει μεθόδους
+      εγγραφής</b>: δεν υπάρχει <code>set</code>, δεν υπάρχει <code>save</code>. Δεν
+      υπάρχει κλήση αλλαγής ρυθμίσεων οθόνης. Οι κλήσεις NVAPI είναι αποκλειστικά
+      ανάγνωσης. Μια αλλαγή δεν μπορεί να συμβεί κατά λάθος, γιατί δεν υπάρχει διαδρομή
+      για να συμβεί.</span>
+    <span class="en">This is not a promise made by the user interface — it is a property
+      of the code. The <code>options.lua</code> reader <b>has no write methods</b>: there
+      is no <code>set</code>, no <code>save</code>. There is no display-settings call. The
+      NVAPI calls are read-only. A change cannot happen by accident, because there is no
+      path for it to happen.</span>
+  </p>
+
+  <div class="note stop">
+    <p><span class="el"><b>Ευθύνη.</b> Η χρήση του προγράμματος και των ρυθμίσεων που
+      προτείνει γίνεται με <b>ΑΠΟΚΛΕΙΣΤΙΚΗ ΕΥΘΥΝΗ ΤΟΥ ΧΡΗΣΤΗ</b>. Οι προτάσεις είναι
+      εκτιμήσεις, όχι εγγυήσεις: βγαίνουν από μετρήσεις, από τη σύνθεση που δήλωσες, και
+      από παραδοχές για το πώς συμπεριφέρεται το DCS. Έλεγξε κάθε τιμή πριν την
+      εφαρμόσεις, και κράτα αντίγραφο του <code>options.lua</code> σου πριν από μεγάλες
+      αλλαγές.</span>
+      <span class="en"><b>Responsibility.</b> Use of this program and of the settings it
+      suggests is <b>ENTIRELY AT THE USER'S OWN RISK</b>. The suggestions are estimates,
+      not guarantees: they come from measurements, from the build you declared, and from
+      assumptions about how DCS behaves. Check every value before you apply it, and keep a
+      copy of your <code>options.lua</code> before making large changes.</span></p>
+  </div>
+
+<!-- ================= ΑΡΧΕΙΑ ================= -->
+<section id="files">
+  <h2><span class="el">Πού γράφει αρχεία</span><span class="en">Where it writes files</span></h2>
+  <p>
+    <span class="el">Δύο αρχεία, και τα δύο δικά του, και τα δύο στο προφίλ σου. Τίποτα
+      μέσα στο DCS, τίποτα στο μητρώο.</span>
+    <span class="en">Two files, both its own, both in your user profile. Nothing inside
+      DCS, nothing in the registry.</span>
+  </p>
+  <table>
+    <tr><th><span class="el">Διαδρομή</span><span class="en">Path</span></th>
+        <th><span class="el">Τι είναι</span><span class="en">What it is</span></th></tr>
+    <tr><td><code>%USERPROFILE%\.astrotune.json</code></td>
+        <td><span class="el">Θέμα, γλώσσα, στόχος, η σύνθεση που επέλεξες. Λίγα KB.
+          Σβήσ' το και ξεκινάει καθαρό.</span>
+          <span class="en">Theme, language, goal, the build you picked. A few KB. Delete
+          it and it starts fresh.</span></td></tr>
+    <tr><td><code>%USERPROFILE%\.astrotune_exports\</code></td>
+        <td><span class="el">Αντίγραφο των προφίλ του driver, για να τα διαβάσει. Απλό
+          κείμενο, αρκετά MB το καθένα. Σβήνονται ελεύθερα.</span>
+          <span class="en">A copy of the driver profiles, so it can read them. Plain text,
+          several MB each. Safe to delete.</span></td></tr>
+  </table>
+  <p>
+    <span class="el">Συν ό,τι αποθηκεύεις εσύ ρητά με το <kbd>Αποθήκευση…</kbd> της
+      σύνθεσης, όπου του πεις.</span>
+    <span class="en">Plus whatever you explicitly save with the build <kbd>Save…</kbd>
+      button, wherever you point it.</span>
+  </p>
+
+<!-- ================= CLI ================= -->
+<section id="cli">
+  <h2><span class="el">Γραμμή εντολών</span><span class="en">Command line</span></h2>
+  <p>
+    <span class="el">Γρήγορη αναφορά χωρίς να ανοίξει παράθυρο — βολικό για script ή για
+      να τη στείλεις σε κάποιον.</span>
+    <span class="en">A quick report with no window — handy for scripting or for sending to
+      someone.</span>
+  </p>
+<pre><code>python AstroTune_1_7.py --report [smooth|fps|quality|balanced] [--sp] [--low] [--vr] [--en]</code></pre>
+  <table>
+    <tr><th><span class="el">Διακόπτης</span><span class="en">Switch</span></th>
+        <th><span class="el">Τι κάνει</span><span class="en">What it does</span></th></tr>
+    <tr><td><code>--sp</code></td>
+        <td><span class="el">Single player — χωρίς αυτό υποθέτει multiplayer.</span>
+            <span class="en">Single player — without it, multiplayer is assumed.</span></td></tr>
+    <tr><td><code>--low</code></td>
+        <td><span class="el">Χαμηλή πτήση / ελικόπτερα.</span>
+            <span class="en">Low level / helicopters.</span></td></tr>
+    <tr><td><code>--vr</code></td>
+        <td><span class="el">Υπολογισμός για VR αντί για οθόνη.</span>
+            <span class="en">Compute for VR instead of a monitor.</span></td></tr>
+    <tr><td><code>--en</code></td>
+        <td><span class="el">Αγγλικά.</span><span class="en">English.</span></td></tr>
+  </table>
+  <div class="note warn">
+    <p><span class="el">Αν τρέχεις το χτισμένο <code>AstroTune.exe</code> που φτιάχτηκε με
+      <code>--noconsole</code>, η έξοδος της αναφοράς δεν φαίνεται πουθενά. Για τη γραμμή
+      εντολών χρησιμοποίησε το <code>.py</code>, ή χτίσε δεύτερο exe με
+      <code>--console</code>.</span>
+      <span class="en">If you run the packaged <code>AstroTune.exe</code> built with
+      <code>--noconsole</code>, the report output goes nowhere. For command-line use run
+      the <code>.py</code>, or build a second exe with <code>--console</code>.</span></p>
+  </div>
+</section>
+
+<!-- ================= ΛΟΓΙΚΗ ================= -->
+<section id="logic">
+  <h2><span class="el">Η λογική πίσω από τις προτάσεις</span><span class="en">The reasoning behind the suggestions</span></h2>
+
+  <h3><span class="el">Το frame cap χωρίς VRR</span><span class="en">Frame cap without VRR</span></h3>
+  <p>
+    <span class="el">Με VRR η οθόνη ακολουθεί τα FPS και το cap μπαίνει λίγο κάτω από το
+      refresh. Χωρίς VRR ισχύει το αντίστροφο, και είναι πιο αυστηρό: το cap πρέπει να
+      είναι <b>ακριβής υποδιαιρέτης</b> του refresh. Στα 144Hz, τα 72 FPS σημαίνουν ότι
+      κάθε καρέ μένει ακριβώς 2 refreshes — τέλειο frame pacing. Οτιδήποτε ενδιάμεσο
+      (90 ή 110 στα 144Hz) δίνει μόνιμο judder, <em>ακόμα κι αν είναι μεγαλύτερο
+      νούμερο</em>.</span>
+    <span class="en">With VRR the monitor follows your FPS, and the cap sits just under
+      the refresh rate. Without VRR it is the other way round, and stricter: the cap must
+      be an <b>exact divisor</b> of the refresh rate. At 144Hz, 72 FPS means every frame
+      is shown for exactly 2 refreshes — perfect frame pacing. Anything in between
+      (90 or 110 at 144Hz) produces permanent judder, <em>even though it is a bigger
+      number</em>.</span>
+  </p>
+  <p>
+    <span class="el">Γι' αυτό το AstroTune μερικές φορές σου προτείνει να <em>αλλάξεις</em>
+      το refresh της οθόνης. Στα 144Hz δεν υπάρχει υποδιαιρέτης ανάμεσα σε 72 και 144· αν
+      δεν κρατάς 72 σε βαρύ multiplayer, τα 120Hz με cap 60 δίνουν πάλι τέλειο pacing,
+      ενώ τα «60 στα 144Hz» όχι (144÷60 = 2,4).</span>
+    <span class="en">That is why AstroTune sometimes suggests <em>changing</em> your
+      refresh rate. At 144Hz there is no divisor between 72 and 144; if you cannot hold 72
+      in heavy multiplayer, 120Hz with a cap of 60 gives perfect pacing again, while
+      "60 at 144Hz" does not (144÷60 = 2.4).</span>
+  </p>
+
+  <h3><span class="el">Η VRAM είναι η #1 αιτία κοψιμάτων</span><span class="en">VRAM is the #1 cause of stutter</span></h3>
+  <p>
+    <span class="el">Όταν γεμίσει η VRAM, το DCS κάνει streaming textures μέσω PCIe και
+      κόβει — ακόμα και με 90 FPS στον μετρητή. Γι' αυτό υπάρχουν σκληρά όρια ανά βαθμίδα
+      VRAM που καμία επιλογή στόχου δεν τα ξεπερνάει: σε 8GB στα 1440p οι textures και τα
+      terrain textures δεν ανεβαίνουν όσο κι αν το ζητήσεις.</span>
+    <span class="en">When VRAM fills up, DCS streams textures over PCIe and stutters —
+      even at 90 FPS on the counter. That is why there are hard per-tier VRAM caps that no
+      goal can override: on 8GB at 1440p, textures and terrain textures do not go up no
+      matter what you ask for.</span>
+  </p>
+
+  <h3><span class="el">Σε VR οι κανόνες αλλάζουν</span><span class="en">In VR the rules change</span></h3>
+  <p>
+    <span class="el">Το κόστος ανά καρέ είναι <em>ανά μάτι × 2 × pixel density²</em>, συν
+      μια σταθερή επιβάρυνση για τη σύνθεση της εικόνας. Και το frame pacing δεν έχει
+      ενδιάμεσες τιμές: ή πιάνεις το πλήρες refresh του headset, ή ακριβώς το μισό με
+      reprojection. Τίποτα ανάμεσα.</span>
+    <span class="en">Per-frame cost is <em>per eye × 2 × pixel density²</em>, plus a fixed
+      overhead for compositing. And frame pacing has no middle ground: either you hit the
+      headset's full refresh, or exactly half of it with reprojection. Nothing in
+      between.</span>
+  </p>
+</section>
+
+<!-- ================= ΟΡΙΑ ================= -->
+<section id="limits">
+  <h2><span class="el">Τι δεν ξέρει ακόμα</span><span class="en">What it doesn't know yet</span></h2>
+  <p>
+    <span class="el">Οι αντιστοιχίσεις τιμών επαληθεύτηκαν πεδίο-πεδίο πάνω σε πραγματικά
+      αρχεία, συγκρίνοντας με screenshots της οθόνης του DCS: 33 στις 33 σωστές. Δύο
+      σημεία μένουν ανοιχτά και το πρόγραμμα το λέει αντί να μαντέψει.</span>
+    <span class="en">The value mappings were verified field by field against real files,
+      compared with screenshots of the DCS screen: 33 out of 33 correct. Two points remain
+      open, and the program says so rather than guessing.</span>
+  </p>
+  <ul>
+    <li><b>DLSS Perf/Quality</b> —
+      <span class="el">το DCS το αποθηκεύει ως κείμενο στο <code>options.lua</code> αλλά
+        ως ακέραιο στα αρχεία των θέσεων. Η αντιστοίχιση του ακεραίου δεν έχει
+        επιβεβαιωθεί, οπότε εκεί εμφανίζεται ως «άγνωστη» και δεν προτείνεται
+        αλλαγή.</span>
+      <span class="en">DCS stores it as text in <code>options.lua</code> but as an integer
+        in the slot files. The integer mapping is not confirmed, so there it shows as
+        "unknown" and no change is suggested.</span></li>
+    <li><b>Terrain Objects Shadows</b> —
+      <span class="el">επαληθεύτηκε μόνο ότι το 0 είναι «Default». Τα υπόλοιπα σκαλιά
+        ακολουθούν τη σειρά του dropdown αλλά δεν έχουν επιβεβαιωθεί.</span>
+      <span class="en">only 0 = "Default" is verified. The remaining steps follow the
+        dropdown order but are not confirmed.</span></li>
+  </ul>
+  <p>
+    <span class="el">Αν μια τιμή δεν είναι στους χάρτες του, το AstroTune τη δείχνει όπως
+      είναι και δεν την πειράζει. Αυτή είναι η σχεδιαστική επιλογή: καλύτερα μια ρύθμιση
+      λιγότερη παρά μια λάθος.</span>
+    <span class="en">If a value is not in its maps, AstroTune shows it as-is and leaves it
+      alone. That is the design choice: better one setting fewer than one setting
+      wrong.</span>
+  </p>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section id="faq">
+  <h2><span class="el">Προβλήματα</span><span class="en">Troubleshooting</span></h2>
+
+  <h3><span class="el">«Δεν βρέθηκε το options.lua»</span><span class="en">"options.lua not found"</span></h3>
+  <p>
+    <span class="el">Το DCS το φτιάχνει την πρώτη φορά που θα αλλάξεις κάτι στις ρυθμίσεις
+      και θα πατήσεις OK. Αν έχεις μη τυπική εγκατάσταση, δείξ' του το με
+      <kbd>Άνοιγμα…</kbd>.</span>
+    <span class="en">DCS creates it the first time you change a setting and press OK. If
+      your install is in a non-standard place, point at it with <kbd>Open…</kbd>.</span>
+  </p>
+
+  <h3><span class="el">Η κάρτα ή ο επεξεργαστής δεν βρέθηκαν στη λίστα</span><span class="en">My card or CPU is not in the list</span></h3>
+  <p>
+    <span class="el">Διάλεξε το πλησιέστερο μοντέλο. Σημασία έχουν η βαθμίδα ισχύος και η
+      VRAM, όχι το ακριβές όνομα.</span>
+    <span class="en">Pick the closest model. What matters is the performance tier and the
+      VRAM, not the exact name.</span>
+  </p>
+
+  <h3><span class="el">Δεν διαβάζεται ο driver</span><span class="en">The driver cannot be read</span></h3>
+  <p>
+    <span class="el">Από την 1.8 το πρόγραμμα δοκιμάζει <b>δύο δρόμους</b>. Πρώτα ζητάει
+      τις τιμές μία-μία από τον driver (χωρίς ενδιάμεσο αρχείο, χωρίς κωδικοποιήσεις).
+      Αν αυτό δεν παίξει, γράφει export όλης της βάσης προφίλ σε αρχείο και το διαβάζει.
+      Αν αποτύχουν και τα δύο, εμφανίζεται παράθυρο με ό,τι ακριβώς απάντησε ο driver —
+      πάτα «Αντιγραφή» και στείλ' το. Ό,τι είχε ήδη διαβαστεί <b>δεν χάνεται</b>: η λίστα
+      δεν αδειάζει. Εναλλακτικά κάνε χειροκίνητο export από την εφαρμογή της NVIDIA και
+      φόρτωσέ το — το αποτέλεσμα είναι το ίδιο. Η λίστα ελέγχου της καρτέλας 2 δουλεύει
+      έτσι κι αλλιώς.</span>
+    <span class="en">Since 1.8 the program tries <b>two routes</b>. First it asks the
+      driver for the values one by one (no intermediate file, no encodings). If that does
+      not work, it exports the whole profile database to a file and reads that. If both
+      fail, a window shows exactly what the driver answered — press "Copy" and send it.
+      Whatever had already been read is <b>not lost</b>: the list does not empty itself.
+      Alternatively do a manual export from the NVIDIA app and load that — the result is
+      identical. The tab 2 checklist works either way.</span>
+  </p>
+
+  <h3><span class="el">Έβαλα τις τιμές και δεν κράτησαν</span><span class="en">I entered the values and they did not stick</span></h3>
+  <p>
+    <span class="el">Το DCS ξαναγράφει ολόκληρο το <code>options.lua</code> όταν πατήσεις
+      OK στις ρυθμίσεις του. Βάλε τις τιμές μέσα στο DCS και πάτα OK εκεί — μην πειράζεις
+      το αρχείο με το χέρι όσο τρέχει το παιχνίδι. Το AstroTune δεν γράφει, οπότε δεν
+      μπορεί να είναι αυτό η αιτία.</span>
+    <span class="en">DCS rewrites the whole <code>options.lua</code> when you press OK in
+      its settings. Enter the values inside DCS and press OK there — do not edit the file
+      by hand while the game is running. AstroTune does not write, so it cannot be the
+      cause.</span>
+  </p>
+
+  <h3><span class="el">Το antivirus παραπονιέται για το exe</span><span class="en">Antivirus complains about the exe</span></h3>
+  <p>
+    <span class="el">Συνηθισμένος ψευδής συναγερμός για πακέτα PyInstaller
+      <code>--onefile</code>: αποσυμπιέζονται σε προσωρινό φάκελο κάθε φορά που τρέχουν,
+      που μοιάζει ύποπτο χωρίς να είναι. Η έκδοση <code>--onedir</code> δεν το
+      προκαλεί.</span>
+    <span class="en">A common false positive for PyInstaller <code>--onefile</code>
+      bundles: they unpack into a temporary folder on every run, which looks suspicious
+      without being so. The <code>--onedir</code> build does not trigger it.</span>
+  </p>
+
+  <h3><span class="el">SyntaxError στο τέλος του αρχείου</span><span class="en">SyntaxError at the end of the file</span></h3>
+  <p>
+    <span class="el">Αν τρέχεις το <code>.py</code> και σκάει στην τελευταία γραμμή, ψάξε
+      για μια περισσευούμενη ανάστροφη κάθετο <code>\</code> στο τέλος. Είναι τυπικό
+      υπόλειμμα από αντιγραφή-επικόλληση· κατέβασε ξανά το αρχείο.</span>
+    <span class="en">If you run the <code>.py</code> and it fails on the last line, look
+      for a stray trailing backslash <code>\</code>. That is a classic copy-paste
+      artefact; download the file again.</span>
+  </p>
+</section>
+
+<footer>
+  <span class="el">AstroTune 2.1 — DCS 2026© for LOCK-ON GREECE by =GR= Astr0.
+    Μόνο ανάγνωση. Η χρήση των προτεινόμενων ρυθμίσεων γίνεται με αποκλειστική ευθύνη
+    του χρήστη.</span>
+  <span class="en">AstroTune 2.1 — DCS 2026© for LOCK-ON GREECE by =GR= Astr0.
+    Read only. Use of the suggested settings is entirely at the user's own risk.</span>
+</footer>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var bL = document.getElementById("btnLang");
+  var bT = document.getElementById("btnTheme");
+
+  function paint() {
+    var el = root.classList.contains("lang-el");
+    var dark = root.classList.contains("theme-dark");
+    root.lang = el ? "el" : "en";
+    bL.innerHTML = el ? '<b>GR</b> / EN' : 'GR / <b>EN</b>';
+    bT.textContent = dark ? (el ? "Ανοιχτό θέμα" : "Light theme")
+                          : (el ? "Σκούρο θέμα" : "Dark theme");
+    document.title = "AstroTune 2.1 — " + (el ? "Οδηγός χρήσης" : "Manual");
+  }
+  bL.addEventListener("click", function () {
+    root.classList.toggle("lang-el");
+    root.classList.toggle("lang-en");
+    paint();
+  });
+  bT.addEventListener("click", function () {
+    root.classList.toggle("theme-dark");
+    root.classList.toggle("theme-light");
+    paint();
+  });
+
+  // Ενεργό στοιχείο πλοήγησης όσο κυλάς.
+  var links = [].slice.call(document.querySelectorAll("#nav a"));
+  var secs = links.map(function (a) {
+    return document.querySelector(a.getAttribute("href"));
+  });
+  function mark() {
+    var best = 0;
+    for (var i = 0; i < secs.length; i++) {
+      if (secs[i] && secs[i].getBoundingClientRect().top <= 120) best = i;
+    }
+    links.forEach(function (a, i) { a.classList.toggle("on", i === best); });
+  }
+  window.addEventListener("scroll", mark, { passive: true });
+  window.addEventListener("resize", mark);
+  paint();
+  mark();
+})();
+</script>
+</body>
+</html>
