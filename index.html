@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AstroTune 2.1 — Manual</title>
+<title>AstroTune 2.3 — Manual</title>
 <style>
   :root{
     --bg:#0d0d0d; --surface:#1e1e1e; --surface2:#161616;
@@ -114,7 +114,7 @@
 
 <header>
   <div class="hbar">
-    <div class="brand">Astro<span>Tune</span> 2.1</div>
+    <div class="brand">Astro<span>Tune</span> 2.3</div>
     <div class="sub">
       <span class="el">Οδηγός χρήσης · DCS 2026© for LOCK-ON GREECE by =GR= Astr0</span>
       <span class="en">User manual · DCS 2026© for LOCK-ON GREECE by =GR= Astr0</span>
@@ -221,11 +221,11 @@
 
   <h3><span class="el">Με το installer</span><span class="en">With the installer</span></h3>
   <p>
-    <span class="el">Τρέξε το <code>AstroTune_2.1_Setup.exe</code>. Δεν ζητάει
+    <span class="el">Τρέξε το <code>AstroTune_2.3_Setup.exe</code>. Δεν ζητάει
       δικαιώματα διαχειριστή, δεν γράφει στο μητρώο, και εγκαθίσταται μόνο για τον
       λογαριασμό σου εκτός αν του πεις αλλιώς στην πρώτη οθόνη. Θέλει Windows 10 ή
       νεότερα, 64bit.</span>
-    <span class="en">Run <code>AstroTune_2.1_Setup.exe</code>. It does not ask for
+    <span class="en">Run <code>AstroTune_2.3_Setup.exe</code>. It does not ask for
       administrator rights, writes nothing to the registry, and installs for your account
       only unless you tell it otherwise on the first screen. Windows 10 or newer,
       64-bit.</span>
@@ -234,13 +234,13 @@
   <h3><span class="el">Από το script</span><span class="en">From the script</span></h3>
   <p>
     <span class="el">Το AstroTune είναι ένα αρχείο Python χωρίς εξαρτήσεις. Αν έχεις
-      Python 3.10 ή νεότερη, κάνε διπλό κλικ στο <code>AstroTune_1_7.py</code> ή
+      Python 3.10 ή νεότερη, κάνε διπλό κλικ στο <code>AstroTune_2_3.py</code> ή
       τρέξε:</span>
     <span class="en">AstroTune is a single Python file with no dependencies. With Python
-      3.10 or newer installed, double-click <code>AstroTune_1_7.py</code> or
+      3.10 or newer installed, double-click <code>AstroTune_2_3.py</code> or
       run:</span>
   </p>
-<pre><code>python AstroTune_1_7.py</code></pre>
+<pre><code>python AstroTune_2_3.py</code></pre>
   <p>
     <span class="el">Δοκιμασμένο σε Python 3.10, 3.11, 3.12 και 3.13. Χρειάζεται μόνο το
       <code>tkinter</code>, που έρχεται μαζί με την Python στα Windows. Ένα προαιρετικό
@@ -432,13 +432,13 @@
   <table>
     <tr><th><span class="el">Τι λέει</span><span class="en">What it says</span></th>
         <th><span class="el">Τι σημαίνει</span><span class="en">What it means</span></th></tr>
-    <tr><td><b>OK (τιμή)</b></td>
-        <td><span class="el">Είναι ήδη όπως πρέπει.</span>
-            <span class="en">Already as it should be.</span></td></tr>
-    <tr><td><span class="el"><b>είναι …</b></span><span class="en"><b>is …</b></span></td>
+    <tr><td><b>✓ τιμή</b></td>
+        <td><span class="el">Είναι ήδη όπως πρέπει — και αυτή είναι η τιμή που βρήκε.</span>
+            <span class="en">Already as it should be — and this is the value found.</span></td></tr>
+    <tr><td><b>✗ τιμή</b></td>
         <td><span class="el">Διαφέρει από τον στόχο — αυτό αλλάζεις.</span>
             <span class="en">Differs from the target — this is what you change.</span></td></tr>
-    <tr><td><span class="el"><b>δεν έχει οριστεί</b></span><span class="en"><b>not set</b></span></td>
+    <tr><td><span class="el"><b>✗ δεν έχει οριστεί</b></span><span class="en"><b>✗ not set</b></span></td>
         <td><span class="el">Δεν υπάρχει στο προφίλ· ισχύει η προεπιλογή του driver.</span>
             <span class="en">Not in the profile; the driver default applies.</span></td></tr>
     <tr><td><span class="el"><b>(από Global)</b></span><span class="en"><b>(from Global)</b></span></td>
@@ -617,30 +617,62 @@
       each slot holds at a glance, with no second window and without loading anything
       inside DCS.</span>
   </p>
+  <p>
+    <span class="el">Από την <b>2.3</b> οι στήλες απαντάνε σε άλλο ερώτημα: όχι «τι έχει
+      η θέση σε σχέση με τώρα», αλλά <b>«ποια θέση είναι ήδη εκεί που θέλω να πάω»</b> —
+      δηλαδή συγκρίνονται με τον <b>Στόχο</b>.</span>
+    <span class="en">Since <b>2.3</b> the columns answer a different question: not "what
+      does the slot hold compared to now", but <b>"which slot is already where I want to
+      go"</b> — they are compared against the <b>Target</b>.</span>
+  </p>
   <table>
     <tr><th><span class="el">Κελί</span><span class="en">Cell</span></th>
         <th><span class="el">Τι σημαίνει</span><span class="en">What it means</span></th></tr>
-    <tr><td><b>=</b></td>
-        <td><span class="el">Η θέση έχει την ίδια τιμή με το ενεργό σου αρχείο.</span>
-            <span class="en">The slot holds the same value as your active file.</span></td></tr>
+    <tr><td><b>✓</b></td>
+        <td><span class="el">Η θέση είναι ήδη στον στόχο για αυτή τη ρύθμιση.</span>
+            <span class="en">The slot is already on target for that setting.</span></td></tr>
     <tr><td><span class="el">μια τιμή</span><span class="en">a value</span></td>
-        <td><span class="el">Η θέση έχει άλλη τιμή — αυτή που γράφει.</span>
-            <span class="en">The slot holds a different value — the one shown.</span></td></tr>
+        <td><span class="el">Δεν είναι — και αυτή είναι η τιμή που έχει.</span>
+            <span class="en">It is not — and this is the value it holds.</span></td></tr>
     <tr><td><b>—</b></td>
         <td><span class="el">Το κλειδί δεν υπάρχει καθόλου μέσα σε εκείνη τη θέση.</span>
             <span class="en">The key is not in that slot file at all.</span></td></tr>
   </table>
   <p>
-    <span class="el">Έτσι το μάτι πέφτει μόνο πάνω στις διαφορές: ό,τι ταυτίζεται γίνεται
-      ένα «=». Πάνω από τον πίνακα υπάρχει γραμμή με τα ονόματα των θέσεων, την
-      ημερομηνία αποθήκευσης της καθεμιάς, και ποια κλειδιά λείπουν από ποια. Αν δεν
+    <span class="el">Μια στήλη γεμάτη <b>✓</b> σημαίνει «φόρτωσε αυτή τη θέση και
+      τελείωσες». Πάνω από τον πίνακα υπάρχει γραμμή με τα ονόματα των θέσεων, την
+      ημερομηνία αποθήκευσης της καθεμιάς, και πόσα κλειδιά λείπουν από ποια. Αν δεν
       υπάρχουν θέσεις, οι στήλες κρύβονται και το «Γιατί» ξαναπαίρνει τον χώρο
       του.</span>
-    <span class="en">So your eye lands only on the differences: whatever matches becomes
-      a single "=". Above the table a line gives the slot names, each one's save date, and
-      which keys are missing from which. If there are no slots, the columns are hidden and
-      the "Why" column takes the space back.</span>
+    <span class="en">A column full of <b>✓</b> means "load this slot and you are done".
+      Above the table a line gives the slot names, each one's save date, and how many keys
+      are missing from which. If there are no slots, the columns are hidden and the "Why"
+      column takes the space back.</span>
   </p>
+
+  <h3><span class="el">«Τώρα Custom2»</span><span class="en">"Now Custom2"</span></h3>
+  <p>
+    <span class="el">Αν μια θέση είναι <b>ταυτόσημη</b> με το ενεργό σου
+      <code>options.lua</code> — ίδια κλειδιά, ίδιες τιμές, και τα 39 — τότε η στήλη της
+      είναι καθαρή επανάληψη της στήλης «Τώρα». Το πρόγραμμα το λέει στην κεφαλίδα
+      (<b>Τώρα Custom2</b>) και κρύβει τη διπλή στήλη. Έτσι μαθαίνεις κάτι που αλλιώς δεν
+      φαίνεται πουθενά: <b>ποια αποθηκευμένη θέση τρέχεις αυτή τη στιγμή</b>.</span>
+    <span class="en">If a slot is <b>identical</b> to your active <code>options.lua</code>
+      — same keys, same values, all 39 — then its column is a pure repeat of the "Now"
+      column. The program says so in the header (<b>Now Custom2</b>) and hides the
+      duplicate. That tells you something otherwise invisible: <b>which saved slot you are
+      currently running</b>.</span>
+  </p>
+  <div class="note">
+    <p><span class="el">Αυστηρά ταυτόσημη. Μια θέση που της λείπουν κλειδιά δεν
+      συγχωνεύεται ποτέ — αν τη φόρτωνες, εκείνες οι ρυθμίσεις θα έμεναν ανέγγιχτες, οπότε
+      το «Τώρα CustomX» θα ήταν ψέμα. Και αν ταιριάζουν <b>δύο</b> θέσεις, δεν κρύβεται
+      καμία: η κεφαλίδα δεν έχει τρόπο να πει και τα δύο χωρίς να μπερδέψει.</span>
+      <span class="en">Strictly identical. A slot with missing keys never merges — if you
+      loaded it, those settings would stay untouched, so "Now CustomX" would be a lie. And
+      if <b>two</b> slots match, none is hidden: the header has no way to say both without
+      confusing you.</span></p>
+  </div>
   <div class="note">
     <p><span class="el">Τα αρχεία των θέσεων ζουν στο
       <code>Config\OptionsPresets\</code> και έχουν διαφορετική μορφή από το
@@ -740,7 +772,7 @@
     <span class="en">A quick report with no window — handy for scripting or for sending to
       someone.</span>
   </p>
-<pre><code>python AstroTune_1_7.py --report [smooth|fps|quality|balanced] [--sp] [--low] [--vr] [--en]</code></pre>
+<pre><code>python AstroTune_2_3.py --report [smooth|fps|quality|balanced] [--sp] [--low] [--vr] [--en]</code></pre>
   <table>
     <tr><th><span class="el">Διακόπτης</span><span class="en">Switch</span></th>
         <th><span class="el">Τι κάνει</span><span class="en">What it does</span></th></tr>
@@ -933,10 +965,10 @@
 </section>
 
 <footer>
-  <span class="el">AstroTune 2.1 — DCS 2026© for LOCK-ON GREECE by =GR= Astr0.
+  <span class="el">AstroTune 2.3 — DCS 2026© for LOCK-ON GREECE by =GR= Astr0.
     Μόνο ανάγνωση. Η χρήση των προτεινόμενων ρυθμίσεων γίνεται με αποκλειστική ευθύνη
     του χρήστη.</span>
-  <span class="en">AstroTune 2.1 — DCS 2026© for LOCK-ON GREECE by =GR= Astr0.
+  <span class="en">AstroTune 2.3 — DCS 2026© for LOCK-ON GREECE by =GR= Astr0.
     Read only. Use of the suggested settings is entirely at the user's own risk.</span>
 </footer>
 
@@ -956,7 +988,7 @@
     bL.innerHTML = el ? '<b>GR</b> / EN' : 'GR / <b>EN</b>';
     bT.textContent = dark ? (el ? "Ανοιχτό θέμα" : "Light theme")
                           : (el ? "Σκούρο θέμα" : "Dark theme");
-    document.title = "AstroTune 2.1 — " + (el ? "Οδηγός χρήσης" : "Manual");
+    document.title = "AstroTune 2.3 — " + (el ? "Οδηγός χρήσης" : "Manual");
   }
   bL.addEventListener("click", function () {
     root.classList.toggle("lang-el");
