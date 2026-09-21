@@ -1,4 +1,4 @@
-# AstroTune 2.1
+# AstroTune 2.3
 
 **A settings advisor for DCS World — reads your real config, knows your hardware, tells you what to change.**
 **Σύμβουλος ρυθμίσεων για το DCS World — διαβάζει το πραγματικό σου αρχείο, ξέρει το μηχάνημά σου, σου λέει τι να αλλάξεις.**
@@ -60,13 +60,13 @@ profiles it reads.
 
 ### Install
 
-**Installer** — run `AstroTune_2.1_Setup.exe`. No administrator rights, nothing written
+**Installer** — run `AstroTune_2.3_Setup.exe`. No administrator rights, nothing written
 to the registry, installs per-user by default.
 
 **From source** — with Python 3.10 or newer:
 
 ```bash
-python AstroTune_1_7.py
+python AstroTune_2_3.py
 ```
 
 Only `tkinter` is required, which ships with Python on Windows. Optional:
@@ -103,17 +103,26 @@ of the suggestion: date, mode, goal, multiplayer, low level, FPS cap, machine an
 path of your `options.lua`. An empty DCS table is not a fault; it says everything is
 already on target.
 
-Tab 3 also shows your **Custom1/2/3 slots as columns**, next to Now and Target: `=` where
-a slot matches your active file, the value where it differs, `—` where the key is not in
-that slot at all. A line above the table gives each slot's save date and which keys are
-missing from which. No separate window, and nothing is ever written to those files.
-"Only what changes" starts unticked, so the tab opens on the full picture; your choice is
-remembered.
+Tab 3 also shows your **Custom1/2/3 slots as columns**, next to Now and Target. Since 2.3
+they are compared against the **Target**: `✓` where the slot is already on target, the
+value where it is not, `—` where the key is not in that slot at all. A column full of `✓`
+means "load this slot and you are done". If a slot is byte-for-byte identical to your
+active `options.lua`, its column is a repeat of Now, so the header says **Now Custom2**
+and the duplicate column is hidden — that is how you learn which saved slot you are
+running. A line above the table gives each slot's save date and how many keys are missing
+from which. Nothing is ever written to those files. "Only what changes" starts unticked,
+so the tab opens on the full picture; your choice is remembered.
+
+**Checking for a new version** is off until you say yes. When on, tab 1 has a _Check now_
+button and the program asks GitHub Releases once a day, in the background, with a 5-second
+timeout and no error popups. It only tells you when something newer exists — you download
+and install it yourself. GitHub pre-releases are ignored, so a beta you publish notifies
+nobody.
 
 ### Command line
 
 ```bash
-python AstroTune_1_7.py --report [smooth|fps|quality|balanced] [--sp] [--low] [--vr] [--en]
+python AstroTune_2_3.py --report [smooth|fps|quality|balanced] [--sp] [--low] [--vr] [--en]
 ```
 
 | Switch  | Meaning                                          |
@@ -137,7 +146,7 @@ Both are its own, in your user profile. Nothing inside DCS, nothing in the regis
 
 ### Building the release
 
-Put `build.bat` next to `AstroTune_1_7.py` and double-click it. It finds Python,
+Put `build.bat` next to `AstroTune_2_3.py` and double-click it. It finds Python,
 installs PyInstaller if missing, creates the folders the Inno script expects, builds the
 exe and tells you what is still missing. Or do it by hand:
 
@@ -145,7 +154,7 @@ exe and tells you what is still missing. Or do it by hand:
 pip install pyinstaller
 pyinstaller --onefile --noconsole --name AstroTune ^
             --distpath build --workpath build\tmp --specpath build ^
-            AstroTune_1_7.py
+            AstroTune_2_3.py
 ```
 
 Then compile `AstroTune_Setup.iss` with Inno Setup 6.3+. The script expects:
@@ -157,6 +166,21 @@ build\AstroTune.exe
 docs\AstroTune_Manual.html
 dist\                      <- the finished Setup.exe lands here
 ```
+
+…but it does not require that layout. Everything flat in one folder works too. Your exe
+can be called anything: the script looks for `build\AstroTune.exe`, then `AstroTune.exe`,
+then `AstroTune_<version>*.exe`, then any `AstroTune*.exe` that is not a `_Setup`, then
+`build\AstroTune*.exe` — and installs whichever it found under the fixed name
+`AstroTune.exe`, via `DestName`. That is why upgrades never leave old exes behind and
+shortcuts never break. If you would rather the installed exe carry the version, one
+commented line near the top of the .iss switches it, and it updates itself from
+`MyAppVersion`. Keep only one `AstroTune*.exe` in the folder; the compiler output prints
+which one it picked.
+
+Two things to keep in mind when editing the .iss: it must stay **UTF-8 with BOM** (without
+it Inno reads the Greek wizard messages as ANSI and they come out as mojibake), and
+`Greek.isl` is an unofficial translation that does not ship with Inno Setup — see the
+comments in section 5 of the script.
 
 AstroTune uses only the standard library, so no `--hidden-import` is needed. `--onefile`
 builds commonly trip antivirus heuristics because they unpack to a temp folder on every run;
@@ -231,13 +255,13 @@ driver που διαβάζει.
 
 ### Εγκατάσταση
 
-**Με installer** — τρέξε το `AstroTune_2.1_Setup.exe`. Δεν ζητάει δικαιώματα
+**Με installer** — τρέξε το `AstroTune_2.3_Setup.exe`. Δεν ζητάει δικαιώματα
 διαχειριστή, δεν γράφει στο μητρώο, εγκαθίσταται μόνο για τον λογαριασμό σου.
 
 **Από τον κώδικα** — με Python 3.10 ή νεότερη:
 
 ```bash
-python AstroTune_1_7.py
+python AstroTune_2_3.py
 ```
 
 Χρειάζεται μόνο το `tkinter`, που έρχεται μαζί με την Python στα Windows. Προαιρετικά, το
@@ -274,17 +298,26 @@ driver, Global και ανά παιχνίδι. Η **καρτέλα 3** είνα�
 είναι ήδη στον στόχο.
 
 Η καρτέλα 3 δείχνει επίσης τις **θέσεις Custom1/2/3 ως στήλες**, δίπλα στο «Τώρα» και τον
-«Στόχο»: `=` όπου η θέση έχει την ίδια τιμή με το ενεργό αρχείο, την τιμή όπου διαφέρει,
-`—` όπου το κλειδί δεν υπάρχει καθόλου στη θέση. Μια γραμμή πάνω από τον πίνακα δίνει την
-ημερομηνία αποθήκευσης της κάθε θέσης και ποια κλειδιά λείπουν από ποια. Χωρίς ξεχωριστό
-παράθυρο, και χωρίς ποτέ να γράφεται τίποτα σε εκείνα τα αρχεία. Το «Μόνο όσα αλλάζουν»
-ξεκινάει ξετσεκαρισμένο, οπότε η καρτέλα ανοίγει στη συνολική εικόνα· η επιλογή σου
-κρατιέται.
+«Στόχο». Από την 2.3 συγκρίνονται με τον **Στόχο**: `✓` όπου η θέση είναι ήδη εκεί, η τιμή
+όπου δεν είναι, `—` όπου το κλειδί δεν υπάρχει καθόλου στη θέση. Στήλη γεμάτη `✓` σημαίνει
+«φόρτωσε αυτή τη θέση και τελείωσες». Αν μια θέση είναι ταυτόσημη με το ενεργό
+`options.lua`, η στήλη της επαναλαμβάνει το «Τώρα», οπότε η κεφαλίδα γράφει **Τώρα
+Custom2** και η διπλή στήλη κρύβεται — έτσι μαθαίνεις ποια αποθηκευμένη θέση τρέχεις. Μια
+γραμμή πάνω από τον πίνακα δίνει την ημερομηνία αποθήκευσης της κάθε θέσης και πόσα
+κλειδιά λείπουν από ποια. Ποτέ δεν γράφεται τίποτα σε εκείνα τα αρχεία. Το «Μόνο όσα
+αλλάζουν» ξεκινάει ξετσεκαρισμένο, οπότε η καρτέλα ανοίγει στη συνολική εικόνα· η επιλογή
+σου κρατιέται.
+
+**Ο έλεγχος για νέα έκδοση** είναι κλειστός μέχρι να πεις ναι. Όταν είναι ανοιχτός, η
+καρτέλα 1 έχει κουμπί _Έλεγχος τώρα_ και το πρόγραμμα ρωτάει το GitHub Releases μία φορά
+την ημέρα, στο παρασκήνιο, με timeout 5 δευτερολέπτων και χωρίς παράθυρα σφαλμάτων. Σου
+λέει μόνο όταν υπάρχει κάτι νεότερο — το κατεβάζεις και το εγκαθιστάς εσύ. Τα pre-release
+του GitHub αγνοούνται, οπότε ένα beta που ανεβάζεις δεν ειδοποιεί κανέναν.
 
 ### Γραμμή εντολών
 
 ```bash
-python AstroTune_1_7.py --report [smooth|fps|quality|balanced] [--sp] [--low] [--vr] [--en]
+python AstroTune_2_3.py --report [smooth|fps|quality|balanced] [--sp] [--low] [--vr] [--en]
 ```
 
 | Διακόπτης | Τι κάνει                                    |
@@ -308,7 +341,7 @@ python AstroTune_1_7.py --report [smooth|fps|quality|balanced] [--sp] [--low] [-
 
 ### Χτίσιμο της έκδοσης
 
-Βάλε το `build.bat` δίπλα στο `AstroTune_1_7.py` και κάνε διπλό κλικ. Βρίσκει την
+Βάλε το `build.bat` δίπλα στο `AstroTune_2_3.py` και κάνε διπλό κλικ. Βρίσκει την
 Python, εγκαθιστά το PyInstaller αν λείπει, φτιάχνει τους φακέλους που περιμένει το Inno,
 χτίζει το exe και σου λέει τι λείπει ακόμα. Ή με το χέρι:
 
@@ -316,7 +349,7 @@ Python, εγκαθιστά το PyInstaller αν λείπει, φτιάχνει 
 pip install pyinstaller
 pyinstaller --onefile --noconsole --name AstroTune ^
             --distpath build --workpath build\tmp --specpath build ^
-            AstroTune_1_7.py
+            AstroTune_2_3.py
 ```
 
 Μετά μεταγλώττισε το `AstroTune_Setup.iss` με Inno Setup 6.3+. Το script περιμένει:
@@ -328,6 +361,21 @@ build\AstroTune.exe
 docs\AstroTune_Manual.html
 dist\                      <- εδώ βγαίνει το τελικό Setup.exe
 ```
+
+…αλλά δεν απαιτεί αυτή τη δομή. Όλα μαζί σε έναν φάκελο δουλεύει το ίδιο. Το exe σου
+μπορεί να λέγεται ό,τι θέλει: το script ψάχνει `build\AstroTune.exe`, μετά
+`AstroTune.exe`, μετά `AstroTune_<έκδοση>*.exe`, μετά ό,τι `AstroTune*.exe` δεν είναι
+`_Setup`, και τέλος `build\AstroTune*.exe` — και εγκαθιστά ό,τι βρει με το σταθερό όνομα
+`AstroTune.exe`, μέσω του `DestName`. Γι' αυτό οι αναβαθμίσεις δεν αφήνουν πίσω παλιά exe
+και οι συντομεύσεις δεν σπάνε. Αν προτιμάς το εγκατεστημένο exe να έχει την έκδοση στο
+όνομά του, μια σχολιασμένη γραμμή στην αρχή του .iss το αλλάζει και ενημερώνεται μόνη της
+από το `MyAppVersion`. Κράτα ΕΝΑ `AstroTune*.exe` στον φάκελο· η έξοδος του compiler
+γράφει ποιο διάλεξε.
+
+Δύο πράγματα όταν πειράζεις το .iss: πρέπει να μείνει **UTF-8 ΜΕ BOM** (χωρίς αυτό το
+Inno διαβάζει τα ελληνικά μηνύματα του οδηγού ως ANSI και βγαίνουν κινέζικα), και το
+`Greek.isl` είναι ανεπίσημη μετάφραση που δεν έρχεται μαζί με το Inno Setup — δες τα
+σχόλια στην ενότητα 5 του script.
 
 Το AstroTune χρησιμοποιεί μόνο standard library, οπότε δεν χρειάζεται `--hidden-import`. Τα
 `--onefile` πακέτα βγάζουν συχνά ψευδή συναγερμό σε antivirus επειδή αποσυμπιέζονται σε
