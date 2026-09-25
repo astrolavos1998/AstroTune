@@ -1,4 +1,4 @@
-# AstroTune 2.3
+# AstroTune 2.6
 
 **A settings advisor for DCS World — reads your real config, knows your hardware, tells you what to change.**
 **Σύμβουλος ρυθμίσεων για το DCS World — διαβάζει το πραγματικό σου αρχείο, ξέρει το μηχάνημά σου, σου λέει τι να αλλάξεις.**
@@ -23,8 +23,8 @@ AstroTune is a single-file Python desktop app. It reads your actual `options.lua
 graphics driver profile, detects what hardware you are running, and produces a per-setting
 recommendation for the goal you choose — on a monitor or in VR.
 
-It is not a "just set these" list. Every suggestion starts from the values you have _right
-now_, weighted by your card, CPU, VRAM, resolution and whether you fly multiplayer. The same
+It is not a "just set these" list. Every suggestion starts from the values you have *right
+now*, weighted by your card, CPU, VRAM, resolution and whether you fly multiplayer. The same
 setting gets a different answer on 8GB than on 24GB.
 
 - **39 DCS settings** with a measurable cost (36 graphics, 3 cockpit)
@@ -37,12 +37,12 @@ setting gets a different answer on 8GB than on 24GB.
 
 ### Read only, and your responsibility
 
-|                                           | Read | Write     |
-| ----------------------------------------- | :--: | --------- |
-| Windows settings (refresh rate, registry) |  ✔   | **never** |
-| Driver profile database (NVAPI)           |  ✔   | **never** |
-| `options.lua`                             |  ✔   | **never** |
-| `Config\OptionsPresets\Custom*.lua`       |  ✔   | **never** |
+| | Read | Write |
+|---|:---:|---|
+| Windows settings (refresh rate, registry) | ✔ | **never** |
+| Driver profile database (NVAPI) | ✔ | **never** |
+| `options.lua` | ✔ | **never** |
+| `Config\OptionsPresets\Custom*.lua` | ✔ | **never** |
 
 This is not a promise made by the user interface — it is a property of the code. The
 `options.lua` reader **has no write methods**: no `set`, no `save`. There is no
@@ -60,13 +60,13 @@ profiles it reads.
 
 ### Install
 
-**Installer** — run `AstroTune_2.3_Setup.exe`. No administrator rights, nothing written
+**Installer** — run `AstroTune_2.6_Setup.exe`. No administrator rights, nothing written
 to the registry, installs per-user by default.
 
 **From source** — with Python 3.10 or newer:
 
 ```bash
-python AstroTune_2_3.py
+python AstroTune_2_6.py
 ```
 
 Only `tkinter` is required, which ships with Python on Windows. Optional:
@@ -77,7 +77,7 @@ Only `tkinter` is required, which ships with Python on Windows. Optional:
 Four choices, one path. Every combination produces a different set of settings — these are
 not filters over one list, the numbers themselves change.
 
-1. **VR or Monitor** — asked on every launch, because in VR _which_ settings matter, _what_
+1. **VR or Monitor** — asked on every launch, because in VR *which* settings matter, *what*
    they cost, and the whole frame-cap strategy all change.
 2. **Multiplayer or Single Player** — on a full server, whatever costs CPU and VRAM comes
    down.
@@ -87,13 +87,13 @@ not filters over one list, the numbers themselves change.
 
 Along the way: **Tab 1** detects your hardware (VRR is not detectable — tick it only if you
 can see G-Sync **active** in the driver). **Tab 2** is the driver checklist, Global and
-per-application. **Tab 3** is the DCS list. There is no apply button anywhere; _List to
-copy_ puts the rows on the clipboard.
+per-application. **Tab 3** is the DCS list. There is no apply button anywhere; *List to
+copy* puts the rows on the clipboard.
 
 Tab 2 reads your driver by itself, by two routes: first it asks NVAPI for each value
 directly (no file, no encoding to get wrong), and if that does not work it exports the
 whole profile database to a text file and parses that. If both fail you get a window with
-exactly what the driver answered, a _Copy_ button, and whatever had already been read is
+exactly what the driver answered, a *Copy* button, and whatever had already been read is
 kept — a failed re-read no longer empties the list.
 
 **Copy everything** in the bottom bar puts hardware, the driver checklist and all 39 DCS
@@ -106,14 +106,19 @@ already on target.
 Tab 3 also shows your **Custom1/2/3 slots as columns**, next to Now and Target. Since 2.3
 they are compared against the **Target**: `✓` where the slot is already on target, the
 value where it is not, `—` where the key is not in that slot at all. A column full of `✓`
-means "load this slot and you are done". If a slot is byte-for-byte identical to your
-active `options.lua`, its column is a repeat of Now, so the header says **Now Custom2**
-and the duplicate column is hidden — that is how you learn which saved slot you are
-running. A line above the table gives each slot's save date and how many keys are missing
+means "load this slot and you are done". If a slot agrees with your active `options.lua`
+on every key it contains, its column is a repeat of Now, so the header says **Now you have
+Custom2** and the duplicate column is hidden — that is how you learn which saved slot you
+are running. A line above the table gives each slot's save date and how many keys are missing
 from which. Nothing is ever written to those files. "Only what changes" starts unticked,
 so the tab opens on the full picture; your choice is remembered.
 
-**Checking for a new version** is off until you say yes. When on, tab 1 has a _Check now_
+**Preload Radius is the one setting that works the other way round.** It costs RAM, not
+FPS: a high value means fewer hitches flying low and fast, and you pay for it at mission
+load, not in flight. Ticking *Low level / helicopters* pushes it to the maximum your RAM
+and drive allow (150000 on 32 GB + NVMe).
+
+**Checking for a new version** is off until you say yes. When on, tab 1 has a *Check now*
 button and the program asks GitHub Releases once a day, in the background, with a 5-second
 timeout and no error popups. It only tells you when something newer exists — you download
 and install it yourself. GitHub pre-releases are ignored, so a beta you publish notifies
@@ -122,31 +127,33 @@ nobody.
 ### Command line
 
 ```bash
-python AstroTune_2_3.py --report [smooth|fps|quality|balanced] [--sp] [--low] [--vr] [--en]
+python AstroTune_2_6.py --report [smooth|fps|quality|balanced]
+                        [--sp] [--low] [--vr] [--en]
 ```
 
-| Switch  | Meaning                                          |
-| ------- | ------------------------------------------------ |
-| `--sp`  | Single player (multiplayer is assumed otherwise) |
-| `--low` | Low level / helicopters                          |
-| `--vr`  | Compute for VR instead of a monitor              |
-| `--en`  | English output                                   |
+| Switch | Meaning |
+|---|---|
+| `--sp` | Single player (multiplayer is assumed otherwise) |
+| `--low` | Low level / helicopters |
+| `--vr` | Compute for VR instead of a monitor |
+| `--en` | English output |
 
 An `AstroTune.exe` built with `--noconsole` has nowhere to print this. Use the `.py`, or
 build a second exe with `--console`.
 
 ### Files it writes
 
-| Path                                | What                                                                            |
-| ----------------------------------- | ------------------------------------------------------------------------------- |
-| `%USERPROFILE%\.astrotune.json`     | Theme, language, goal, saved build. Delete it to start fresh.                   |
+| Path | What |
+|---|---|
+| `%USERPROFILE%\.astrotune.json` | Theme, language, goal, saved build, and whether to ask VR/Monitor at startup. Delete it to start fresh. |
+| `rig.json` (wherever you save it) | **Not read automatically.** *Save…* / *Load…* on tab 1 are for sending a build to someone or keeping several machines. Your own build is remembered in `.astrotune.json` without it. |
 | `%USERPROFILE%\.astrotune_exports\` | A copy of the driver profiles, so it can read them. Plain text. Safe to delete. |
 
 Both are its own, in your user profile. Nothing inside DCS, nothing in the registry.
 
 ### Building the release
 
-Put `build.bat` next to `AstroTune_2_3.py` and double-click it. It finds Python,
+Put `build.bat` next to `AstroTune_2_6.py` and double-click it. It finds Python,
 installs PyInstaller if missing, creates the folders the Inno script expects, builds the
 exe and tells you what is still missing. Or do it by hand:
 
@@ -154,7 +161,7 @@ exe and tells you what is still missing. Or do it by hand:
 pip install pyinstaller
 pyinstaller --onefile --noconsole --name AstroTune ^
             --distpath build --workpath build\tmp --specpath build ^
-            AstroTune_2_3.py
+            AstroTune_2_6.py
 ```
 
 Then compile `AstroTune_Setup.iss` with Inno Setup 6.3+. The script expects:
@@ -187,19 +194,20 @@ builds commonly trip antivirus heuristics because they unpack to a temp folder o
 `--onedir` does not.
 
 The installer wizard is English-only unless `Greek.isl` is present, because Greek is an
-_unofficial_ Inno Setup translation and is not bundled. Drop it into a `languages\` folder
+*unofficial* Inno Setup translation and is not bundled. Drop it into a `languages\` folder
 next to the `.iss` (or into Inno's own `Languages\`) and the script picks it up
 automatically. This affects the wizard only — the application itself is bilingual either way.
 
 ### What it doesn't know yet
 
 Value mappings were verified field by field against real config files compared with DCS
-screenshots: 33 of 33 correct. Two remain open, and the program says so instead of guessing:
+screenshots: 33 of 33 correct. **DLSS Perf/Quality** is now fully mapped — DCS stores it as
+text in older `options.lua` backups and as an integer today (`1` Quality, `2` Balanced,
+`3` Performance, `4` Ultra Performance), and both forms are read. One item remains open, and
+the program says so with `≈` instead of guessing silently:
 
-- **DLSS Perf/Quality** — DCS stores it as text in `options.lua` but as an integer in the
-  Custom slot files. The integer mapping is unconfirmed, so it shows as "unknown" there.
-- **Terrain Objects Shadows** — only `0 = Default` is verified; the remaining steps follow
-  the dropdown order but are unconfirmed.
+- **Terrain Objects Shadows** — only `0 = Default` is verified; the remaining steps
+  (`1` Flat, `2` Flat only, `3` Off) follow the dropdown order but are unconfirmed.
 
 ### Credits
 
@@ -217,7 +225,7 @@ Eagle Dynamics or NVIDIA.
 `options.lua` και το προφίλ του driver, αναγνωρίζει τι υλικό έχεις, και βγάζει πρόταση ανά
 ρύθμιση για τον στόχο που διαλέγεις — σε οθόνη ή σε VR.
 
-Δεν είναι λίστα «βάλε αυτά». Κάθε πρόταση ξεκινάει από τις τιμές που έχεις _τώρα_,
+Δεν είναι λίστα «βάλε αυτά». Κάθε πρόταση ξεκινάει από τις τιμές που έχεις *τώρα*,
 σταθμισμένες με την κάρτα, τον επεξεργαστή, τη VRAM, την ανάλυση και το αν παίζεις
 multiplayer. Η ίδια ρύθμιση παίρνει άλλη απάντηση σε 8GB και άλλη σε 24GB.
 
@@ -232,12 +240,12 @@ multiplayer. Η ίδια ρύθμιση παίρνει άλλη απάντηση
 
 ### Μόνο ανάγνωση, και δική σου ευθύνη
 
-|                                              | Ανάγνωση | Εγγραφή  |
-| -------------------------------------------- | :------: | -------- |
-| Ρυθμίσεις των Windows (refresh rate, μητρώο) |    ✔     | **ποτέ** |
-| Βάση προφίλ του driver (NVAPI)               |    ✔     | **ποτέ** |
-| `options.lua`                                |    ✔     | **ποτέ** |
-| `Config\OptionsPresets\Custom*.lua`          |    ✔     | **ποτέ** |
+| | Ανάγνωση | Εγγραφή |
+|---|:---:|---|
+| Ρυθμίσεις των Windows (refresh rate, μητρώο) | ✔ | **ποτέ** |
+| Βάση προφίλ του driver (NVAPI) | ✔ | **ποτέ** |
+| `options.lua` | ✔ | **ποτέ** |
+| `Config\OptionsPresets\Custom*.lua` | ✔ | **ποτέ** |
 
 Δεν είναι υπόσχεση του περιβάλλοντος χρήστη — είναι ιδιότητα του κώδικα. Ο αναγνώστης του
 `options.lua` **δεν έχει μεθόδους εγγραφής**: ούτε `set`, ούτε `save`. Δεν υπάρχει κλήση
@@ -255,13 +263,13 @@ driver που διαβάζει.
 
 ### Εγκατάσταση
 
-**Με installer** — τρέξε το `AstroTune_2.3_Setup.exe`. Δεν ζητάει δικαιώματα
+**Με installer** — τρέξε το `AstroTune_2.6_Setup.exe`. Δεν ζητάει δικαιώματα
 διαχειριστή, δεν γράφει στο μητρώο, εγκαθίσταται μόνο για τον λογαριασμό σου.
 
 **Από τον κώδικα** — με Python 3.10 ή νεότερη:
 
 ```bash
-python AstroTune_2_3.py
+python AstroTune_2_6.py
 ```
 
 Χρειάζεται μόνο το `tkinter`, που έρχεται μαζί με την Python στα Windows. Προαιρετικά, το
@@ -272,8 +280,8 @@ python AstroTune_2_3.py
 Τέσσερις επιλογές, μία διαδρομή. Κάθε συνδυασμός δίνει διαφορετικό σύνολο ρυθμίσεων — δεν
 είναι φίλτρα πάνω σε μια ενιαία λίστα, αλλάζουν τα ίδια τα νούμερα.
 
-1. **VR ή Οθόνη** — ρωτιέται σε κάθε άνοιγμα, γιατί σε VR αλλάζουν _ποιες_ ρυθμίσεις
-   μετράνε, _πόσο_ κοστίζουν, και ολόκληρη η στρατηγική του frame cap.
+1. **VR ή Οθόνη** — ρωτιέται σε κάθε άνοιγμα, γιατί σε VR αλλάζουν *ποιες* ρυθμίσεις
+   μετράνε, *πόσο* κοστίζουν, και ολόκληρη η στρατηγική του frame cap.
 2. **Multiplayer ή Single Player** — σε γεμάτο server πέφτει ό,τι κοστίζει σε CPU και VRAM.
 3. **Χαμηλή πτήση (ελικόπτερα) ή όχι** — ανεβαίνει ό,τι φαίνεται κοντά στο έδαφος, πέφτει
    ό,τι μετράει μόνο ψηλά.
@@ -282,12 +290,12 @@ python AstroTune_2_3.py
 Στον δρόμο: η **καρτέλα 1** ανιχνεύει το μηχάνημα (το VRR δεν ανιχνεύεται — τσέκαρέ το μόνο
 αν βλέπεις το G-Sync **ενεργό** στον driver). Η **καρτέλα 2** είναι η λίστα ελέγχου του
 driver, Global και ανά παιχνίδι. Η **καρτέλα 3** είναι η λίστα του DCS. Δεν υπάρχει πουθενά
-κουμπί εφαρμογής· το _Λίστα για αντιγραφή_ βάζει τις γραμμές στο πρόχειρο.
+κουμπί εφαρμογής· το *Λίστα για αντιγραφή* βάζει τις γραμμές στο πρόχειρο.
 
 Η καρτέλα 2 διαβάζει τον driver μόνη της, με δύο δρόμους: πρώτα ζητάει από το NVAPI κάθε
 τιμή ξεχωριστά (χωρίς αρχείο, χωρίς κωδικοποίηση να πάει στραβά), κι αν αυτό δεν παίξει
 γράφει ολόκληρη τη βάση προφίλ σε αρχείο κειμένου και το διαβάζει. Αν αποτύχουν και τα
-δύο, βγαίνει παράθυρο με ό,τι ακριβώς απάντησε ο driver και κουμπί _Αντιγραφή_, ενώ ό,τι
+δύο, βγαίνει παράθυρο με ό,τι ακριβώς απάντησε ο driver και κουμπί *Αντιγραφή*, ενώ ό,τι
 είχε ήδη διαβαστεί κρατιέται — μια αποτυχημένη ξαναανάγνωση δεν αδειάζει πια τη λίστα.
 
 Το **Αντιγραφή όλων** στην κάτω μπάρα βάζει σε ένα κείμενο το υλικό, τη λίστα του driver
@@ -300,16 +308,22 @@ driver, Global και ανά παιχνίδι. Η **καρτέλα 3** είνα�
 Η καρτέλα 3 δείχνει επίσης τις **θέσεις Custom1/2/3 ως στήλες**, δίπλα στο «Τώρα» και τον
 «Στόχο». Από την 2.3 συγκρίνονται με τον **Στόχο**: `✓` όπου η θέση είναι ήδη εκεί, η τιμή
 όπου δεν είναι, `—` όπου το κλειδί δεν υπάρχει καθόλου στη θέση. Στήλη γεμάτη `✓` σημαίνει
-«φόρτωσε αυτή τη θέση και τελείωσες». Αν μια θέση είναι ταυτόσημη με το ενεργό
-`options.lua`, η στήλη της επαναλαμβάνει το «Τώρα», οπότε η κεφαλίδα γράφει **Τώρα
-Custom2** και η διπλή στήλη κρύβεται — έτσι μαθαίνεις ποια αποθηκευμένη θέση τρέχεις. Μια
+«φόρτωσε αυτή τη θέση και τελείωσες». Αν μια θέση συμφωνεί με το ενεργό
+`options.lua` σε κάθε κλειδί που περιέχει, η στήλη της επαναλαμβάνει το «Τώρα», οπότε η
+κεφαλίδα γράφει **Τώρα έχεις Custom2** και η διπλή στήλη κρύβεται — έτσι μαθαίνεις ποια
+αποθηκευμένη θέση τρέχεις. Μια
 γραμμή πάνω από τον πίνακα δίνει την ημερομηνία αποθήκευσης της κάθε θέσης και πόσα
 κλειδιά λείπουν από ποια. Ποτέ δεν γράφεται τίποτα σε εκείνα τα αρχεία. Το «Μόνο όσα
 αλλάζουν» ξεκινάει ξετσεκαρισμένο, οπότε η καρτέλα ανοίγει στη συνολική εικόνα· η επιλογή
 σου κρατιέται.
 
+**Το Preload Radius είναι η μόνη ρύθμιση που δουλεύει ανάποδα.** Κοστίζει RAM, όχι FPS:
+υψηλή τιμή σημαίνει λιγότερα κοψίματα σε χαμηλή γρήγορη πτήση, και το τίμημα το πληρώνεις
+στη φόρτωση της αποστολής, όχι στην πτήση. Με τσεκαρισμένο το *Χαμηλή πτήση / ελικόπτερα*
+πάει τέρμα, όσο επιτρέπουν η RAM και ο δίσκος (150000 σε 32 GB + NVMe).
+
 **Ο έλεγχος για νέα έκδοση** είναι κλειστός μέχρι να πεις ναι. Όταν είναι ανοιχτός, η
-καρτέλα 1 έχει κουμπί _Έλεγχος τώρα_ και το πρόγραμμα ρωτάει το GitHub Releases μία φορά
+καρτέλα 1 έχει κουμπί *Έλεγχος τώρα* και το πρόγραμμα ρωτάει το GitHub Releases μία φορά
 την ημέρα, στο παρασκήνιο, με timeout 5 δευτερολέπτων και χωρίς παράθυρα σφαλμάτων. Σου
 λέει μόνο όταν υπάρχει κάτι νεότερο — το κατεβάζεις και το εγκαθιστάς εσύ. Τα pre-release
 του GitHub αγνοούνται, οπότε ένα beta που ανεβάζεις δεν ειδοποιεί κανέναν.
@@ -317,31 +331,33 @@ Custom2** και η διπλή στήλη κρύβεται — έτσι μαθα
 ### Γραμμή εντολών
 
 ```bash
-python AstroTune_2_3.py --report [smooth|fps|quality|balanced] [--sp] [--low] [--vr] [--en]
+python AstroTune_2_6.py --report [smooth|fps|quality|balanced]
+                        [--sp] [--low] [--vr] [--en]
 ```
 
-| Διακόπτης | Τι κάνει                                    |
-| --------- | ------------------------------------------- |
-| `--sp`    | Single player (αλλιώς υποθέτει multiplayer) |
-| `--low`   | Χαμηλή πτήση / ελικόπτερα                   |
-| `--vr`    | Υπολογισμός για VR αντί για οθόνη           |
-| `--en`    | Έξοδος στα αγγλικά                          |
+| Διακόπτης | Τι κάνει |
+|---|---|
+| `--sp` | Single player (αλλιώς υποθέτει multiplayer) |
+| `--low` | Χαμηλή πτήση / ελικόπτερα |
+| `--vr` | Υπολογισμός για VR αντί για οθόνη |
+| `--en` | Έξοδος στα αγγλικά |
 
 Ένα `AstroTune.exe` χτισμένο με `--noconsole` δεν έχει πού να τα τυπώσει. Χρησιμοποίησε το
 `.py`, ή χτίσε δεύτερο exe με `--console`.
 
 ### Πού γράφει αρχεία
 
-| Διαδρομή                            | Τι είναι                                                                               |
-| ----------------------------------- | -------------------------------------------------------------------------------------- |
-| `%USERPROFILE%\.astrotune.json`     | Θέμα, γλώσσα, στόχος, αποθηκευμένη σύνθεση. Σβήσ' το και ξεκινάει καθαρό.              |
+| Διαδρομή | Τι είναι |
+|---|---|
+| `%USERPROFILE%\.astrotune.json` | Θέμα, γλώσσα, στόχος, αποθηκευμένη σύνθεση, και αν θα ρωτάει VR/Οθόνη στην εκκίνηση. Σβήσ' το και ξεκινάει καθαρό. |
+| `rig.json` (όπου το αποθηκεύσεις) | **Δεν διαβάζεται αυτόματα.** Τα *Αποθήκευση…* / *Φόρτωση…* της καρτέλας 1 είναι για να στείλεις μια σύνθεση ή να κρατάς περισσότερα μηχανήματα. Η δική σου σύνθεση θυμάται μόνη της στο `.astrotune.json`. |
 | `%USERPROFILE%\.astrotune_exports\` | Αντίγραφο των προφίλ του driver, για να τα διαβάσει. Απλό κείμενο. Σβήνονται ελεύθερα. |
 
 Και τα δύο δικά του, στο προφίλ σου. Τίποτα μέσα στο DCS, τίποτα στο μητρώο.
 
 ### Χτίσιμο της έκδοσης
 
-Βάλε το `build.bat` δίπλα στο `AstroTune_2_3.py` και κάνε διπλό κλικ. Βρίσκει την
+Βάλε το `build.bat` δίπλα στο `AstroTune_2_6.py` και κάνε διπλό κλικ. Βρίσκει την
 Python, εγκαθιστά το PyInstaller αν λείπει, φτιάχνει τους φακέλους που περιμένει το Inno,
 χτίζει το exe και σου λέει τι λείπει ακόμα. Ή με το χέρι:
 
@@ -349,7 +365,7 @@ Python, εγκαθιστά το PyInstaller αν λείπει, φτιάχνει 
 pip install pyinstaller
 pyinstaller --onefile --noconsole --name AstroTune ^
             --distpath build --workpath build\tmp --specpath build ^
-            AstroTune_2_3.py
+            AstroTune_2_6.py
 ```
 
 Μετά μεταγλώττισε το `AstroTune_Setup.iss` με Inno Setup 6.3+. Το script περιμένει:
@@ -382,21 +398,22 @@ Inno διαβάζει τα ελληνικά μηνύματα του οδηγού
 προσωρινό φάκελο κάθε φορά· το `--onedir` όχι.
 
 Ο οδηγός εγκατάστασης βγαίνει μόνο στα αγγλικά αν λείπει το `Greek.isl`, γιατί τα ελληνικά
-είναι _ανεπίσημη_ μετάφραση του Inno Setup και δεν έρχονται μαζί του. Βάλ' το σε φάκελο
+είναι *ανεπίσημη* μετάφραση του Inno Setup και δεν έρχονται μαζί του. Βάλ' το σε φάκελο
 `languages\` δίπλα στο `.iss` (ή στο `Languages\` του Inno) και το script το βρίσκει μόνο
 του. Αφορά μόνο τον οδηγό — το ίδιο το πρόγραμμα είναι δίγλωσσο ούτως ή άλλως.
 
 ### Τι δεν ξέρει ακόμα
 
 Οι αντιστοιχίσεις τιμών επαληθεύτηκαν πεδίο-πεδίο πάνω σε πραγματικά αρχεία, σε σύγκριση με
-screenshots του DCS: 33 στις 33 σωστές. Δύο μένουν ανοιχτά, και το πρόγραμμα το λέει αντί να
-μαντέψει:
+screenshots του DCS: 33 στις 33 σωστές. Το **DLSS Perf/Quality** έχει πλέον πλήρη
+αντιστοίχιση — το DCS το αποθηκεύει ως κείμενο σε παλιά backup του `options.lua` και ως
+ακέραιο σήμερα (`1` Quality, `2` Balanced, `3` Performance, `4` Ultra Performance), και
+διαβάζονται και οι δύο μορφές. Ένα μένει ανοιχτό, και το πρόγραμμα το λέει με `≈` αντί να
+μαντέψει σιωπηλά:
 
-- **DLSS Perf/Quality** — το DCS το αποθηκεύει ως κείμενο στο `options.lua` αλλά ως ακέραιο
-  στα αρχεία των θέσεων Custom. Η αντιστοίχιση του ακεραίου δεν έχει επιβεβαιωθεί, οπότε
-  εκεί εμφανίζεται ως «άγνωστη».
 - **Terrain Objects Shadows** — επαληθεύτηκε μόνο ότι `0 = Default`· τα υπόλοιπα σκαλιά
-  ακολουθούν τη σειρά του dropdown αλλά δεν έχουν επιβεβαιωθεί.
+  (`1` Flat, `2` Flat only, `3` Off) ακολουθούν τη σειρά του dropdown αλλά δεν έχουν
+  επιβεβαιωθεί.
 
 ### Ευχαριστίες
 
