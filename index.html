@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AstroTune 2.3 — Manual</title>
+<title>AstroTune 2.6 — Manual</title>
 <style>
   :root{
     --bg:#0d0d0d; --surface:#1e1e1e; --surface2:#161616;
@@ -114,7 +114,7 @@
 
 <header>
   <div class="hbar">
-    <div class="brand">Astro<span>Tune</span> 2.3</div>
+    <div class="brand">Astro<span>Tune</span> 2.6</div>
     <div class="sub">
       <span class="el">Οδηγός χρήσης · DCS 2026© for LOCK-ON GREECE by =GR= Astr0</span>
       <span class="en">User manual · DCS 2026© for LOCK-ON GREECE by =GR= Astr0</span>
@@ -221,11 +221,11 @@
 
   <h3><span class="el">Με το installer</span><span class="en">With the installer</span></h3>
   <p>
-    <span class="el">Τρέξε το <code>AstroTune_2.3_Setup.exe</code>. Δεν ζητάει
+    <span class="el">Τρέξε το <code>AstroTune_2.6_Setup.exe</code>. Δεν ζητάει
       δικαιώματα διαχειριστή, δεν γράφει στο μητρώο, και εγκαθίσταται μόνο για τον
       λογαριασμό σου εκτός αν του πεις αλλιώς στην πρώτη οθόνη. Θέλει Windows 10 ή
       νεότερα, 64bit.</span>
-    <span class="en">Run <code>AstroTune_2.3_Setup.exe</code>. It does not ask for
+    <span class="en">Run <code>AstroTune_2.6_Setup.exe</code>. It does not ask for
       administrator rights, writes nothing to the registry, and installs for your account
       only unless you tell it otherwise on the first screen. Windows 10 or newer,
       64-bit.</span>
@@ -234,13 +234,13 @@
   <h3><span class="el">Από το script</span><span class="en">From the script</span></h3>
   <p>
     <span class="el">Το AstroTune είναι ένα αρχείο Python χωρίς εξαρτήσεις. Αν έχεις
-      Python 3.10 ή νεότερη, κάνε διπλό κλικ στο <code>AstroTune_2_3.py</code> ή
+      Python 3.10 ή νεότερη, κάνε διπλό κλικ στο <code>AstroTune_2_6.py</code> ή
       τρέξε:</span>
     <span class="en">AstroTune is a single Python file with no dependencies. With Python
-      3.10 or newer installed, double-click <code>AstroTune_2_3.py</code> or
+      3.10 or newer installed, double-click <code>AstroTune_2_6.py</code> or
       run:</span>
   </p>
-<pre><code>python AstroTune_2_3.py</code></pre>
+<pre><code>python AstroTune_2_6.py</code></pre>
   <p>
     <span class="el">Δοκιμασμένο σε Python 3.10, 3.11, 3.12 και 3.13. Χρειάζεται μόνο το
       <code>tkinter</code>, που έρχεται μαζί με την Python στα Windows. Ένα προαιρετικό
@@ -276,12 +276,22 @@
   </p>
   <p>
     <span class="el">Αν πετάς πάντα με τον ίδιο τρόπο, τσέκαρε το «Θυμήσου την επιλογή και
-      μη με ξαναρωτήσεις». Μπορείς να αλλάξεις όποτε θες από το κουμπί
+      μη με ξαναρωτήσεις». Μπορείς να αλλάξεις λειτουργία όποτε θες από το κουμπί
       <kbd>Λειτουργία ⇄</kbd> κάτω δεξιά.</span>
     <span class="en">If you always fly the same way, tick "Remember this choice and stop
-      asking". You can switch at any time from the <kbd>Mode ⇄</kbd> button at the bottom
-      right.</span>
+      asking". You can switch mode at any time from the <kbd>Mode ⇄</kbd> button at the
+      bottom right.</span>
   </p>
+  <div class="note good">
+    <p><span class="el">Από την <b>2.6</b> ο ίδιος διακόπτης υπάρχει και μέσα στο
+      πρόγραμμα, στην <b>καρτέλα 1</b>: <kbd>Να ρωτάει VR ή Οθόνη σε κάθε εκκίνηση</kbd>.
+      Μέχρι τότε, μόλις έλεγες «μη με ξαναρωτήσεις» δεν υπήρχε τρόπος να φέρεις πίσω την
+      αρχική οθόνη — ο διακόπτης ζούσε μόνο πάνω της.</span>
+      <span class="en">Since <b>2.6</b> the same switch also lives inside the program, on
+      <b>tab 1</b>: <kbd>Ask VR or Monitor on every start</kbd>. Before that, once you said
+      "stop asking" there was no way to bring the chooser back — the switch lived only on
+      the chooser itself.</span></p>
+  </div>
   <p>
     <span class="el">Πάνω αριστερά και πάνω δεξιά αλλάζεις θέμα και γλώσσα. Η επιλογή σου
       κρατιέται για την επόμενη φορά. Την πρώτη φορά ξεκινάει σε σκούρο θέμα και
@@ -495,9 +505,12 @@
       <span class="en">on a full server, whatever costs CPU and VRAM comes down.</span></li>
     <li><b><span class="el">Χαμηλή πτήση ή όχι</span><span class="en">Low level or not</span></b> —
       <span class="el">ανεβαίνει ό,τι φαίνεται κοντά στο έδαφος, πέφτει ό,τι μετράει
-        μόνο ψηλά.</span>
+        μόνο ψηλά. Από την <b>2.5</b> πηγαίνει και το <b>Preload Radius τέρμα</b>, όσο
+        επιτρέπει η RAM και ο δίσκος: εκεί χτυπάνε τα streaming hitches.</span>
       <span class="en">what you can see near the ground goes up; what only matters at
-        altitude comes down.</span></li>
+        altitude comes down. Since <b>2.5</b> it also pushes <b>Preload Radius to the
+        maximum</b> your RAM and drive allow — that is where streaming hitches
+        happen.</span></li>
     <li><b><span class="el">Ο στόχος</span><span class="en">The goal</span></b> —
       <span class="el">ένας από τους τέσσερις παρακάτω.</span>
       <span class="en">one of the four below.</span></li>
@@ -650,28 +663,47 @@
       column takes the space back.</span>
   </p>
 
-  <h3><span class="el">«Τώρα Custom2»</span><span class="en">"Now Custom2"</span></h3>
+  <div class="note good">
+    <p><span class="el"><b>Το Preload Radius δουλεύει ανάποδα από τα υπόλοιπα.</b> Δεν
+      κοστίζει FPS· κοστίζει <b>RAM</b>. Υψηλή τιμή σημαίνει λιγότερα κοψίματα όταν
+      πετάς χαμηλά και γρήγορα, γιατί το DCS έχει ήδη φορτώσει το έδαφος μπροστά σου.
+      Το τίμημα το πληρώνεις <b>στη φόρτωση της αποστολής</b> — και μετά από respawn —
+      όχι μέσα στην πτήση. Το ταβάνι το βάζουν η RAM και ο δίσκος, όχι η κάρτα
+      γραφικών.</span>
+      <span class="en"><b>Preload Radius works the other way round.</b> It does not cost
+      FPS; it costs <b>RAM</b>. A high value means fewer hitches when you fly low and
+      fast, because DCS has already loaded the terrain ahead of you. You pay for it
+      <b>at mission load</b> — and after a respawn — not in flight. The ceiling comes
+      from your RAM and drive, not your graphics card.</span></p>
+  </div>
+
+  <h3><span class="el">«Τώρα έχεις Custom2»</span><span class="en">"Now you have Custom2"</span></h3>
   <p>
-    <span class="el">Αν μια θέση είναι <b>ταυτόσημη</b> με το ενεργό σου
-      <code>options.lua</code> — ίδια κλειδιά, ίδιες τιμές, και τα 39 — τότε η στήλη της
-      είναι καθαρή επανάληψη της στήλης «Τώρα». Το πρόγραμμα το λέει στην κεφαλίδα
-      (<b>Τώρα Custom2</b>) και κρύβει τη διπλή στήλη. Έτσι μαθαίνεις κάτι που αλλιώς δεν
-      φαίνεται πουθενά: <b>ποια αποθηκευμένη θέση τρέχεις αυτή τη στιγμή</b>.</span>
-    <span class="en">If a slot is <b>identical</b> to your active <code>options.lua</code>
-      — same keys, same values, all 39 — then its column is a pure repeat of the "Now"
-      column. The program says so in the header (<b>Now Custom2</b>) and hides the
-      duplicate. That tells you something otherwise invisible: <b>which saved slot you are
-      currently running</b>.</span>
+    <span class="el">Αν μια θέση συμφωνεί με το ενεργό σου <code>options.lua</code> σε
+      <b>κάθε κλειδί που περιέχει</b>, τότε η στήλη της είναι καθαρή επανάληψη της στήλης
+      «Τώρα»: φορτώνοντάς την δεν θα άλλαζε τίποτα. Το πρόγραμμα το λέει στην κεφαλίδα
+      (<b>Τώρα έχεις Custom2</b>) και κρύβει τη διπλή στήλη. Έτσι μαθαίνεις κάτι που
+      αλλιώς δεν φαίνεται πουθενά: <b>ποια αποθηκευμένη θέση τρέχεις αυτή τη
+      στιγμή</b>.</span>
+    <span class="en">If a slot agrees with your active <code>options.lua</code> on
+      <b>every key it contains</b>, its column is a pure repeat of the "Now" column:
+      loading it would change nothing. The program says so in the header (<b>Now you have
+      Custom2</b>) and hides the duplicate. That tells you something otherwise invisible:
+      <b>which saved slot you are currently running</b>.</span>
   </p>
   <div class="note">
-    <p><span class="el">Αυστηρά ταυτόσημη. Μια θέση που της λείπουν κλειδιά δεν
-      συγχωνεύεται ποτέ — αν τη φόρτωνες, εκείνες οι ρυθμίσεις θα έμεναν ανέγγιχτες, οπότε
-      το «Τώρα CustomX» θα ήταν ψέμα. Και αν ταιριάζουν <b>δύο</b> θέσεις, δεν κρύβεται
-      καμία: η κεφαλίδα δεν έχει τρόπο να πει και τα δύο χωρίς να μπερδέψει.</span>
-      <span class="en">Strictly identical. A slot with missing keys never merges — if you
-      loaded it, those settings would stay untouched, so "Now CustomX" would be a lie. And
-      if <b>two</b> slots match, none is hidden: the header has no way to say both without
-      confusing you.</span></p>
+    <p><span class="el">«Κάθε κλειδί που περιέχει», όχι «και τα 39»: το DCS παραλείπει
+      συστηματικά τα τρία checkbox του κόκπιτ όταν γράφει μια θέση, οπότε ο αυστηρός όρος
+      δεν θα ίσχυε ποτέ. Μια θέση πρέπει πάντως να κρατάει τουλάχιστον το 90% των
+      ρυθμίσεων — μια θέση με δυο-τρία κλειδιά που τυχαίνει να συμφωνούν δεν δικαιούται να
+      λέγεται «αυτό τρέχεις». Και αν ταιριάζουν <b>δύο</b> θέσεις, δεν κρύβεται καμία: η
+      κεφαλίδα δεν έχει τρόπο να πει και τα δύο χωρίς να μπερδέψει.</span>
+      <span class="en">"Every key it contains", not "all 39": DCS systematically omits the
+      three cockpit checkboxes when it writes a slot, so the strict rule would never fire.
+      A slot must still hold at least 90% of the settings — one with two or three keys that
+      happen to agree does not get to be called "what you are running". And if <b>two</b>
+      slots match, none is hidden: the header has no way to say both without confusing
+      you.</span></p>
   </div>
   <div class="note">
     <p><span class="el">Τα αρχεία των θέσεων ζουν στο
@@ -772,7 +804,7 @@
     <span class="en">A quick report with no window — handy for scripting or for sending to
       someone.</span>
   </p>
-<pre><code>python AstroTune_2_3.py --report [smooth|fps|quality|balanced] [--sp] [--low] [--vr] [--en]</code></pre>
+<pre><code>python AstroTune_2_6.py --report [smooth|fps|quality|balanced] [--sp] [--low] [--vr] [--en]</code></pre>
   <table>
     <tr><th><span class="el">Διακόπτης</span><span class="en">Switch</span></th>
         <th><span class="el">Τι κάνει</span><span class="en">What it does</span></th></tr>
@@ -965,10 +997,10 @@
 </section>
 
 <footer>
-  <span class="el">AstroTune 2.3 — DCS 2026© for LOCK-ON GREECE by =GR= Astr0.
+  <span class="el">AstroTune 2.6 — DCS 2026© for LOCK-ON GREECE by =GR= Astr0.
     Μόνο ανάγνωση. Η χρήση των προτεινόμενων ρυθμίσεων γίνεται με αποκλειστική ευθύνη
     του χρήστη.</span>
-  <span class="en">AstroTune 2.3 — DCS 2026© for LOCK-ON GREECE by =GR= Astr0.
+  <span class="en">AstroTune 2.6 — DCS 2026© for LOCK-ON GREECE by =GR= Astr0.
     Read only. Use of the suggested settings is entirely at the user's own risk.</span>
 </footer>
 
@@ -988,7 +1020,7 @@
     bL.innerHTML = el ? '<b>GR</b> / EN' : 'GR / <b>EN</b>';
     bT.textContent = dark ? (el ? "Ανοιχτό θέμα" : "Light theme")
                           : (el ? "Σκούρο θέμα" : "Dark theme");
-    document.title = "AstroTune 2.3 — " + (el ? "Οδηγός χρήσης" : "Manual");
+    document.title = "AstroTune 2.6 — " + (el ? "Οδηγός χρήσης" : "Manual");
   }
   bL.addEventListener("click", function () {
     root.classList.toggle("lang-el");
